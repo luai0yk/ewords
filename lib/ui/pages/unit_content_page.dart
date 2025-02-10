@@ -64,6 +64,7 @@ class _UnitContentPageState extends State<UnitContentPage>
       (text, start, end, word) {
         if (tabController!.index == 1) {
           ttsProvider!.updateCurrentWordStartEnd(start, end);
+          print(word);
         }
       },
     );
@@ -79,6 +80,7 @@ class _UnitContentPageState extends State<UnitContentPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     // Ensure passageArgs is only set once
     passageArgs ??= ModalRoute.of(context)!.settings.arguments as PassageArgs;
 
@@ -107,8 +109,8 @@ class _UnitContentPageState extends State<UnitContentPage>
 
   @override
   Widget build(BuildContext context) {
-    MyTheme.initialize(context);
-    myContext = context;
+    // MyTheme.initialize(context);
+    // myContext = context;
     return Scaffold(
       appBar: Hidable(
         deltaFactor: 0.06,

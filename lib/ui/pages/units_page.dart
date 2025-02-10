@@ -22,6 +22,7 @@ class UnitsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MyTheme.initialize(context);
+    print("Theme Mode : ${Theme.of(context).brightness == Brightness.dark}");
     return Scaffold(
       appBar: Hidable(
         preferredWidgetSize: Size.fromHeight(75.sp),
@@ -68,11 +69,11 @@ class UnitsPage extends StatelessWidget {
               );
             }
 
-            List<PassageModel> readingList = snapshot.data!;
+            List<PassageModel> passageList = snapshot.data!;
 
             return ListView.builder(
               controller: scrollController,
-              itemCount: readingList.length, // Count of readings
+              itemCount: passageList.length, // Count of readings
               padding: const EdgeInsets.all(10),
               itemBuilder: (context, index) {
                 return MyListTile(
@@ -84,10 +85,10 @@ class UnitsPage extends StatelessWidget {
                         builder: (context) => const UnitContentPage(),
                         settings: RouteSettings(
                           arguments: PassageArgs(
-                              unitId: readingList[index].unitId,
-                              bookId: readingList[index].bookId,
-                              passageTitle: readingList[index].passageTitle,
-                              passage: readingList[index].passage),
+                              unitId: passageList[index].unitId,
+                              bookId: passageList[index].bookId,
+                              passageTitle: passageList[index].passageTitle,
+                              passage: passageList[index].passage),
                         ),
                       ),
                     );
@@ -95,8 +96,8 @@ class UnitsPage extends StatelessWidget {
                   isLeadingVisible: true,
                   leadingText: (index + 1).toString(),
                   leadingTextSize: 32.sp,
-                  title: readingList[index].passageTitle,
-                  text: readingList[index].passage,
+                  title: passageList[index].passageTitle,
+                  text: passageList[index].passage,
                   textMaxLines: 2, // Limit text to 2 lines
                   isThreeLines: false,
                 );
