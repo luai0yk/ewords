@@ -1,0 +1,200 @@
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:ewords/ui/dialogs/change_theme_dialog.dart';
+import 'package:ewords/ui/dialogs/change_tts_language_dialog.dart';
+import 'package:ewords/ui/dialogs/download_tts_assistant_dialog.dart';
+import 'package:ewords/utils/dialog_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../provider/settings_provider.dart';
+import '../../theme/my_colors.dart';
+import '../../theme/my_theme.dart';
+
+BuildContext? myContext; // Global context for dialog navigation
+
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  SharedPreferences? prefs; // SharedPreferences instance
+
+  @override
+  void initState() {
+    super.initState();
+    init(); // Initialize SharedPreferences on startup
+  }
+
+  // Asynchronous function to initialize SharedPreferences
+  init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    MyTheme.initialize(context);
+    myContext = context; // Set global context for dialog navigation
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('settings'.toUpperCase()),
+        titleTextStyle: TextStyle(
+          color: MyColors.themeColors[300],
+          fontSize: 16.sp,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2,
+        ),
+      ),
+      body: ListView(
+        children: [
+          // Section title for General settings
+          Padding(
+            padding: EdgeInsets.only(top: 15.sp, left: 15.sp, right: 15.sp),
+            child: Text('General settings', style: MyTheme().headSettingStyle),
+          ),
+          // List tile for theme selection
+          ListTile(
+            leading: Theme.of(context).brightness == Brightness.light
+                ? const Icon(Icons.light_mode_rounded)
+                : const Icon(Icons.dark_mode_rounded),
+            title: Text(
+              'Theme',
+              style: MyTheme().mainTextStyle,
+            ),
+            subtitle: Text(
+              context.read<SettingsProvider>().themeState!,
+              style: MyTheme().secondaryTextStyle,
+            ),
+            onTap: () {
+              DialogHelper.show(
+                context: context,
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return const ChangeThemeDialog();
+                },
+              );
+            },
+          ),
+          // Section title for TTS settings
+          Padding(
+            padding: EdgeInsets.only(top: 15.sp, left: 15.sp, right: 15.sp),
+            child: Text(
+              'TTS settings',
+              style: MyTheme().headSettingStyle,
+            ),
+          ),
+          // List tile for accent selection
+          ListTile(
+            leading: Selector<SettingsProvider, String>(
+              builder: (context, value, child) {
+                return Text(
+                  value == 'en-GB' ? 'UK' : 'US',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                );
+              },
+              selector: (ctx, val) {
+                return val.speechAccentCode!;
+              },
+            ),
+            title: Text(
+              'Accent',
+              style: MyTheme().mainTextStyle,
+            ),
+            subtitle: Text(
+              'This is the accent of text-to-speech',
+              style: MyTheme().secondaryTextStyle,
+            ),
+            onTap: () {
+              DialogHelper.show(
+                context: context,
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return const ChangeTtsLanguageDialog();
+                },
+              );
+            },
+          ),
+          // List tile for speech rate adjustment
+          Selector<SettingsProvider, double>(
+            selector: (ctx, val) => val.speechRate!,
+            builder: (context, value, child) => ListTile(
+              leading: const Icon(Icons.speed_rounded),
+              title: Text(
+                'Speech Rate',
+                style: MyTheme().mainTextStyle,
+              ),
+              subtitle: Slider(
+                inactiveColor: MyColors.themeColors[100],
+                thumbColor: MyColors.themeColors[500],
+                value: value,
+                max: 1.5,
+                min: 0.2,
+                activeColor: MyColors.themeColors[300],
+                onChanged: (value) {
+                  context
+                      .read<SettingsProvider>()
+                      .setSpeechRate(value); // Update speech rate
+                },
+              ),
+              trailing: Text(
+                value.toString().substring(0, 3),
+                style: MyTheme().secondaryTextStyle.copyWith(
+                      fontSize: 12.sp,
+                      color: MyColors.themeColors[300],
+                    ),
+              ),
+            ),
+          ),
+
+          // List tile for TTS download option
+          ListTile(
+            leading: const Icon(Icons.download_rounded),
+            title: Text(
+              'Download TTS',
+              style: MyTheme().mainTextStyle,
+            ),
+            subtitle: RichText(
+              text: TextSpan(style: MyTheme().secondaryTextStyle, children: [
+                const TextSpan(
+                  text: 'Download an accent if not downloaded yet, ',
+                ),
+                WidgetSpan(
+                  child: InkWell(
+                    child: Text(
+                      'help'.toUpperCase(),
+                      style: MyTheme().secondaryTextStyle.copyWith(
+                            fontSize: 12.sp,
+                            color: MyColors.themeColors[300],
+                          ),
+                    ),
+                    onTap: () {
+                      DialogHelper.show(
+                        context: context,
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return const DownloadTtsAssistantDialog();
+                        },
+                      ); // Show help dialog for TTS download
+                    },
+                  ),
+                ),
+              ]),
+            ),
+            onTap: () async {
+              // Open Android TTS settings
+              const AndroidIntent intent = AndroidIntent(
+                action: 'com.android.settings.TTS_SETTINGS',
+                package: 'com.android.settings',
+              );
+              await intent.launch();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
