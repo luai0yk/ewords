@@ -4,12 +4,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MyCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? margin;
-  const MyCard({super.key, required this.child, this.margin});
+  final double width;
+  final AlignmentGeometry alignment;
+  const MyCard({
+    super.key,
+    required this.child,
+    this.margin,
+    this.width = double.infinity,
+    this.alignment = Alignment.center,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      alignment: alignment,
       margin: margin,
+      width: width,
       padding: EdgeInsets.all(8.sp),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onSurface,

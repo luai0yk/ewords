@@ -5,7 +5,7 @@ class MyConstants {
   static String WORD = 'Word';
   static String DEFINITION = 'Definition';
   static String EXAMPLE = 'Example';
-  static String UNIT_TITLE = 'Unit_Title';
+  static String PASSAGE_TITLE = 'Unit_Title';
   static String PASSAGE = 'Reading';
 
   static List<String> bookDescription = [

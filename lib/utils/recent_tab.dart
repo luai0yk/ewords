@@ -15,7 +15,8 @@ class RecentTab {
     // Read the last unit opened from SharedPreferences
     final String unitId = prefs.getString(MyConstants.UNIT_ID) ?? '';
     final String bookId = prefs.getString(MyConstants.BOOK_ID) ?? '';
-    final String passageTitle = prefs.getString(MyConstants.UNIT_TITLE) ?? '';
+    final String passageTitle =
+        prefs.getString(MyConstants.PASSAGE_TITLE) ?? '';
     final String passage = prefs.getString(MyConstants.PASSAGE) ?? '';
 
     // Check whether there is an existing recent data or not
@@ -51,7 +52,7 @@ class RecentTab {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(MyConstants.UNIT_ID, passageArgs.unitId);
     await prefs.setString(MyConstants.BOOK_ID, passageArgs.bookId);
-    await prefs.setString(MyConstants.UNIT_TITLE, passageArgs.passageTitle);
+    await prefs.setString(MyConstants.PASSAGE_TITLE, passageArgs.passageTitle);
     await prefs.setString(MyConstants.PASSAGE, passageArgs.passage);
   }
 }

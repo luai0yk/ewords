@@ -8,7 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../../utils/combine_unit_words.dart';
-import '../../utils/snackbar_helper.dart';
+import '../../utils/helpers/snackbar_helper.dart';
 import '../my_widgets/my_snackbar.dart';
 
 class ShareUnitContentDialog extends StatelessWidget {

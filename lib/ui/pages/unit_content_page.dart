@@ -1,4 +1,4 @@
-import 'package:ewords/utils/bottom_sheet_helper.dart';
+import 'package:ewords/utils/helpers/bottom_sheet_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -210,7 +210,8 @@ class _UnitContentPageState extends State<UnitContentPage>
             scrollController: scrollController,
           ),
           PassageTab(passageArgs: passageArgs!),
-          const UnitQuizTab(),
+          UnitQuizTab(passageArgs: passageArgs!),
+          //TimerProgressBar(),
         ],
       ),
     );

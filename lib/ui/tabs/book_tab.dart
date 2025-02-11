@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../../utils/constants.dart';
+import '../../utils/helpers/snackbar_helper.dart';
 import '../../utils/recent_tab.dart';
-import '../../utils/snackbar_helper.dart';
 import '../my_widgets/my_card.dart';
 import '../my_widgets/my_snackbar.dart';
 import '../pages/dictionary_page.dart';
@@ -38,15 +38,18 @@ class BookListPage extends StatelessWidget {
                   // Recent Button
                   Expanded(
                     child: GestureDetector(
-                      onTap: () => RecentTab.loadRecentTap(
-                        context: context,
-                        onError: (msg) {
-                          SnackBarHelper.show(
-                            context: context,
-                            widget: MySnackBar.create(content: msg),
-                          );
-                        },
-                      ),
+                      onTap: () {
+                        RecentTab.loadRecentTap(
+                          context: context,
+                          onError: (msg) {
+                            SnackBarHelper.show(
+                              context: context,
+                              widget: MySnackBar.create(content: msg),
+                            );
+                          },
+                        );
+                        MyTheme.initialize(context);
+                      },
                       child: MyCard(
                         child: Text(
                           textAlign: TextAlign.center,
