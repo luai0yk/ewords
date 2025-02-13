@@ -19,7 +19,7 @@ class QuizProvider extends ChangeNotifier {
   String _correctAnswer = "";
   String _selectedAnswer = "";
   bool _isAnswered = false;
-  bool _isPaused = false;
+  bool isPaused = false;
   int _correctCount = 0;
   int _wrongCount = 0;
   final Random _random = Random();
@@ -32,7 +32,6 @@ class QuizProvider extends ChangeNotifier {
   String get correctAnswer => _correctAnswer;
   String get selectedAnswer => _selectedAnswer;
   bool get isAnswered => _isAnswered;
-  bool get isPaused => _isPaused;
   int get correctCount => _correctCount;
   int get wrongCount => _wrongCount;
 
@@ -56,7 +55,7 @@ class QuizProvider extends ChangeNotifier {
     _timer?.cancel();
     _progress = 0.0;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_progress < 1.0 && !_isPaused) {
+      if (_progress < 1.0 && !isPaused) {
         _progress += 1 / duration;
         notifyListeners();
       } else if (_progress >= 1.0) {
@@ -89,7 +88,7 @@ class QuizProvider extends ChangeNotifier {
 
     _selectedAnswer = "";
     _isAnswered = false;
-    _isPaused = false;
+    isPaused = false;
     _startProgress();
     notifyListeners();
   }
@@ -130,7 +129,7 @@ class QuizProvider extends ChangeNotifier {
   }
 
   void togglePauseResume() {
-    _isPaused = !_isPaused;
+    isPaused = !isPaused;
     notifyListeners();
   }
 
