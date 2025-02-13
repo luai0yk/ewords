@@ -1,3 +1,4 @@
+import 'package:ewords/provider/quiz_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => GNavProvider()),
         ChangeNotifierProvider(
             create: (context) => TabBarIconsVisibilityProvider()),
+        ChangeNotifierProvider(create: (context) => QuizProvider()),
       ],
       child: const MyApp(), // Start the app with MyApp as the root widget
     ),

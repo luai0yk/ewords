@@ -2,7 +2,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:ewords/ui/dialogs/change_theme_dialog.dart';
 import 'package:ewords/ui/dialogs/change_tts_language_dialog.dart';
 import 'package:ewords/ui/dialogs/download_tts_assistant_dialog.dart';
-import 'package:ewords/utils/dialog_helper.dart';
+import 'package:ewords/utils/helpers/dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
