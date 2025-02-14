@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:ewords/db/words_helper.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../args/passage_args.dart';
-import '../db/db_helper.dart';
 import '../models/word_model.dart';
 
 class QuizProvider extends ChangeNotifier {
   QuizProvider();
 
   double _progress = 0.0;
-  final int duration = 20;
+  final int duration = 30;
   int _questionNumber = 0;
   Timer? _timer;
   List<WordModel> _listWords = [];
@@ -35,8 +35,13 @@ class QuizProvider extends ChangeNotifier {
   int get correctCount => _correctCount;
   int get wrongCount => _wrongCount;
 
+  void setSelectedAnswer(String val) {
+    _selectedAnswer = val;
+    notifyListeners();
+  }
+
   void loadWords(PassageArgs passageArgs) async {
-    List<WordModel> words = await DBHelper().getWords(
+    List<WordModel> words = await WordsHelper.instance.getWords(
       bookId: passageArgs.bookId,
       unitId: passageArgs.unitId,
     );

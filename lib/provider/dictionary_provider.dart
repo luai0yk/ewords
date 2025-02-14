@@ -1,5 +1,6 @@
+import 'package:ewords/db/words_helper.dart';
 import 'package:flutter/material.dart';
-import '../db/db_helper.dart';
+
 import '../models/word_model.dart';
 
 class DictionaryProvider extends ChangeNotifier {
@@ -24,7 +25,7 @@ class DictionaryProvider extends ChangeNotifier {
   Future<void> _fetchWords() async {
     try {
       // Fetch words from the database using DBHelper
-      _wordData = await DBHelper().getWords();
+      _wordData = await WordsHelper.instance.getWords();
       _wordList = _wordData; // Initialize wordList with fetched data
     } catch (e) {
       // Handle errors (e.g., log or notify) and set wordList to empty

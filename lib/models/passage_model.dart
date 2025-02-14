@@ -12,10 +12,10 @@ class PassageModel {
   factory PassageModel.fromMap(Map<String, dynamic> map) {
     /*Split the passage field by its lines into a list then get
     * the first item of it which holds the passage title*/
-    String title = map['Reading'].split('\n').first;
+    String title = map['passage'].split('\n').first;
 
     /*Split the passage field by its line into a list using split('\n') function*/
-    List<String> lines = map['Reading'].split('\n');
+    List<String> lines = map['passage'].split('\n');
 
     /*Skip or delete the first line which holds the passage title
     * then convert the list into one String value again using join('') function*/
@@ -23,9 +23,9 @@ class PassageModel {
 
     // Create a new PassageModel instance from a Map
     return PassageModel(
-      id: map['Id'].toString(),
-      unitId: map['Unit_Id'].toString(),
-      bookId: map['Book_Id'].toString(),
+      id: map['id'].toString(),
+      unitId: map['unit_id'].toString(),
+      bookId: map['book_id'].toString(),
       passageTitle: title,
       passage: reading,
     );

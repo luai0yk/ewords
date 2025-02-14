@@ -1,12 +1,12 @@
 import 'package:ewords/args/passage_args.dart';
+import 'package:ewords/db/words_helper.dart';
 
-import '../db/db_helper.dart';
 import '../models/word_model.dart';
 
 class CombineUnitWords {
   static Future<String> getCombinedWords(PassageArgs passageArgs) async {
     /*Enquire for the unit words*/
-    List<WordModel> list = await DBHelper().getWords(
+    List<WordModel> list = await WordsHelper.instance.getWords(
       bookId: passageArgs.bookId,
       unitId: passageArgs.unitId,
     );

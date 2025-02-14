@@ -16,7 +16,7 @@ import '../../utils/combine_unit_words.dart';
 import '../../utils/recent_tab.dart';
 import '../../utils/tts.dart';
 import '../dialogs/share_unit_content_dialog.dart';
-import '../tabs/unit_quiz_tab.dart';
+import '../tabs/quiz_tab.dart';
 import '../tabs/unit_words_tab.dart';
 
 class UnitContentPage extends StatefulWidget {
@@ -210,7 +210,7 @@ class _UnitContentPageState extends State<UnitContentPage>
             scrollController: scrollController,
           ),
           PassageTab(passageArgs: passageArgs!),
-          UnitQuizTab(passageArgs: passageArgs!),
+          QuizTab(passageArgs: passageArgs!),
           //TimerProgressBar(),
         ],
       ),

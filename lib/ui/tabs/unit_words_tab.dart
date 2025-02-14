@@ -1,12 +1,12 @@
 import 'package:ewords/args/passage_args.dart';
+import 'package:ewords/db/favorite_word_helper.dart';
+import 'package:ewords/db/words_helper.dart';
 import 'package:ewords/utils/tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 
-import '../../db/db_helper.dart';
-import '../../db/favorite_db_helper.dart';
 import '../../models/favorite_word_model.dart';
 import '../../models/word_model.dart';
 import '../../provider/favorite_words_provider.dart';
@@ -54,7 +54,7 @@ class _UnitWordListPageState extends State<UnitWordListPage> {
     myContext = context; // Set the global context
 
     return FutureBuilder<List<WordModel>>(
-      future: DBHelper().getWords(
+      future: WordsHelper.instance.getWords(
           bookId: widget.passageArgs.bookId, unitId: widget.passageArgs.unitId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -133,9 +133,10 @@ class _UnitWordListPageState extends State<UnitWordListPage> {
                       return IconButton(
                         onPressed: () async {
                           if (isFavorite) {
-                            await FavoriteDBHelper().deleteFavorite(word.id);
+                            await FavoriteWordHelper.instance
+                                .deleteFavorite(word.id);
                           } else {
-                            await FavoriteDBHelper().addFavorite(
+                            await FavoriteWordHelper.instance.addFavorite(
                               FavoriteWordModel(
                                 id: word.id,
                                 unitId: word.unitId,

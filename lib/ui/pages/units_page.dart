@@ -1,9 +1,9 @@
 import 'package:ewords/args/passage_args.dart';
+import 'package:ewords/db/passage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hidable/hidable.dart';
 
-import '../../db/db_helper.dart';
 import '../../models/passage_model.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
@@ -35,7 +35,7 @@ class UnitsPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: FutureBuilder<List<PassageModel>>(
-          future: DBHelper().getReadings(bookId: bookId),
+          future: PassageHelper.instance.getPassages(bookId: bookId),
           builder: (context, snapshot) {
             // Handle loading state
             if (snapshot.connectionState == ConnectionState.waiting) {

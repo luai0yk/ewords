@@ -1,9 +1,9 @@
+import 'package:ewords/db/favorite_word_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hidable/hidable.dart';
 import 'package:provider/provider.dart';
 
-import '../../db/favorite_db_helper.dart';
 import '../../models/favorite_word_model.dart';
 import '../../provider/favorite_words_provider.dart';
 import '../../theme/my_colors.dart';
@@ -37,7 +37,7 @@ class FavoriteListPage extends StatelessWidget {
       body: Consumer<FavoriteWordsProvider>(
         builder: (context, favoriteWordsProvider, child) {
           return FutureBuilder<List<FavoriteWordModel>>(
-            future: FavoriteDBHelper()
+            future: FavoriteWordHelper.instance
                 .getFavorites(), // Fetch favorites from database
             builder: (context, snapshot) {
               // Handle loading state
