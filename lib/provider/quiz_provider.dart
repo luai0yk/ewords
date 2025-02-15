@@ -35,6 +35,8 @@ class QuizProvider extends ChangeNotifier {
   int get correctCount => _correctCount;
   int get wrongCount => _wrongCount;
 
+  set setProgress(double val) => _progress = val;
+
   void setSelectedAnswer(String val) {
     _selectedAnswer = val;
     notifyListeners();

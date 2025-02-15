@@ -1,5 +1,6 @@
 import 'package:ewords/provider/quiz_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +14,14 @@ import '../theme/my_theme.dart';
 import 'ui/pages/home_page.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Ensure Flutter is initialized for asynchronous code
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  // SystemChrome.setEnabledSystemUIMode(
+  //   SystemUiMode.manual,
+  //   overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+  // );
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(
     MultiProvider(
@@ -45,6 +52,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    init();
+  }
+
+  void init() async {
+    // This is where you can initialize the resources needed by your app while
+    // the splash screen is displayed.  Remove the following example because
+    // delaying the user experience is a bad design practice!
+    FlutterNativeSplash.remove();
   }
 
   @override

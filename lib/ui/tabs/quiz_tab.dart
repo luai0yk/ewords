@@ -11,11 +11,18 @@ import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../../utils/helpers/dialog_helper.dart';
 import '../dialogs/complete_quiz_dialog.dart';
+import '../dialogs/pasue_resume_dialog.dart';
 import '../my_widgets/my_card.dart';
 
 class QuizTab extends StatefulWidget {
   final PassageArgs passageArgs;
-  const QuizTab({super.key, required this.passageArgs});
+  final TabController tabController;
+
+  const QuizTab({
+    super.key,
+    required this.passageArgs,
+    required this.tabController,
+  });
 
   @override
   State<QuizTab> createState() => _QuizTabState();
@@ -29,7 +36,24 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     super.initState();
     _quizProvider = context.read<QuizProvider>();
     _quizProvider!.loadWords(widget.passageArgs);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   DialogHelper.show(
+    //     context: context,
+    //     pageBuilder: (context, animation, secondaryAnimation) {
+    //       return StartQuizDialog(
+    //         passageArgs: widget.passageArgs,
+    //         tabController: widget.tabController,
+    //       );
+    //     },
+    //   );
+    // });
+
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
@@ -40,11 +64,15 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _quizProvider!.isPaused = true;
-    } else if (state == AppLifecycleState.resumed) {
-      _quizProvider!.isPaused = false;
-    }
+    if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
+      DialogHelper.show(
+        context: context,
+        isDismissible: false,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return PauseResumeDialog(tabController: widget.tabController);
+        },
+      );
+    } else if (state == AppLifecycleState.resumed) {}
   }
 
   @override
@@ -72,6 +100,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                       isDismissible: false,
                       pageBuilder: (context, animation, secondaryAnimation) {
                         return CompleteQuizDialog(
+                          tabController: widget.tabController,
                           onRestart: () {
                             provider.isQuizCompleted.value = false;
                             provider.loadWords(widget.passageArgs);
@@ -88,7 +117,8 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                 child: Column(
                   children: [
                     MyCard(
-                      alignment: Alignment.center,
+                      alignment: Alignment.topLeft,
+                      height: 120.h,
                       child: Column(
                         children: [
                           Text(
@@ -100,31 +130,22 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                                 : "Loading...",
                             style: MyTheme().mainTextStyle,
                           ),
+                          const Spacer(),
                           const SizedBox(height: 20),
-                          Row(
+                          Stack(
+                            alignment: Alignment.centerLeft,
                             children: [
-                              Expanded(
-                                child: LinearProgressIndicator(
-                                  color: MyColors.themeColors[300],
-                                  backgroundColor: MyColors.themeColors[100],
-                                  value: provider.progress,
-                                  minHeight: 15,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                              LinearProgressIndicator(
+                                color: MyColors.themeColors[300],
+                                backgroundColor: MyColors.themeColors[50],
+                                value: provider.progress,
+                                minHeight: 20.h,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              RichText(
-                                text: TextSpan(
-                                  style: MyTheme().mainTextStyle,
-                                  children: [
-                                    TextSpan(
-                                        text:
-                                            "  ${(provider.duration - (provider.progress * provider.duration)).toInt()} / "),
-                                    TextSpan(
-                                      text: "${provider.duration}",
-                                      style: TextStyle(
-                                          color: MyColors.themeColors[300]),
-                                    ),
-                                  ],
+                              Text(
+                                ' ${(provider.duration - (provider.progress * provider.duration)).toInt()} / ${provider.duration}',
+                                style: const TextStyle(
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
@@ -134,80 +155,75 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                     ),
                     const Spacer(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            style: MyTheme().mainTextStyle,
-                            children: [
-                              TextSpan(
-                                text: 'Q: ',
-                                style: TextStyle(
-                                  color: MyColors.themeColors[300],
-                                ),
-                              ),
-                              TextSpan(
-                                text: ' ${provider.questionNumber + 1}',
-                                style: MyTheme()
-                                    .secondaryTextStyle
-                                    .copyWith(fontSize: 16.sp),
-                              ),
-                              TextSpan(
-                                text: ' /',
-                                style: MyTheme()
-                                    .secondaryTextStyle
-                                    .copyWith(fontSize: 16.sp),
-                              ),
-                              TextSpan(
-                                text: ' 20',
-                                style: TextStyle(
-                                  color: MyColors.themeColors[300],
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 5),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: MyColors.themeColors[50],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            '${provider.questionNumber} / 20',
+                            style: TextStyle(
+                              color: MyColors.themeColors[300],
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        RichText(
-                          text: TextSpan(
-                            style: MyTheme().mainTextStyle,
-                            children: [
-                              const TextSpan(
-                                text: 'C: ',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '${provider.correctCount}',
-                                style: MyTheme()
-                                    .secondaryTextStyle
-                                    .copyWith(fontSize: 16.sp),
-                              ),
-                            ],
+                        const SizedBox(width: 5),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green[50],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            'C: ${provider.correctCount}',
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        RichText(
-                          text: TextSpan(
-                            style: MyTheme().mainTextStyle,
-                            children: [
-                              const TextSpan(
-                                text: 'W: ',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '${provider.wrongCount}',
-                                style: MyTheme()
-                                    .secondaryTextStyle
-                                    .copyWith(fontSize: 16.sp),
-                              ),
-                            ],
+                        const SizedBox(width: 5),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red[50],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            'W: ${provider.wrongCount}',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            DialogHelper.show(
+                              context: context,
+                              isDismissible: false,
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) {
+                                return PauseResumeDialog(
+                                    tabController: widget.tabController);
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            color: MyColors.themeColors[300],
+                            _quizProvider!.isPaused
+                                ? Icons.play_arrow_rounded
+                                : Icons.pause_rounded,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children:

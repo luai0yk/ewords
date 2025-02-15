@@ -37,15 +37,8 @@ class MyTheme {
         color: MyColors.themeColors[600],
       ),
     ),
-    tabBarTheme: TabBarTheme(
-      labelStyle: const TextStyle(
-        color: Colors.white,
-      ),
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: MyColors.themeColors[300],
-      ),
-      unselectedLabelStyle: const TextStyle(
+    tabBarTheme: const TabBarTheme(
+      unselectedLabelStyle: TextStyle(
         color: Colors.black12,
       ),
     ),
@@ -90,15 +83,8 @@ class MyTheme {
         color: MyColors.themeColors[600],
       ),
     ),
-    tabBarTheme: TabBarTheme(
-      labelStyle: const TextStyle(
-        color: Colors.white,
-      ),
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: MyColors.themeColors[300],
-      ),
-      unselectedLabelStyle: const TextStyle(
+    tabBarTheme: const TabBarTheme(
+      unselectedLabelStyle: TextStyle(
         color: Colors.white12,
       ),
     ),

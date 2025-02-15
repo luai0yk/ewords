@@ -10,6 +10,7 @@ import '../../args/passage_args.dart';
 import '../../provider/settings_provider.dart';
 import '../../provider/tabbar_icons_visibility_provider.dart';
 import '../../provider/tts_provider.dart';
+import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../../ui/tabs/passage_tab.dart';
 import '../../utils/combine_unit_words.dart';
@@ -177,10 +178,12 @@ class _UnitContentPageState extends State<UnitContentPage>
           ],
           bottom: TabBar(
             controller: tabController,
-            dividerHeight: 1,
-            dividerColor: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white12
-                : Colors.black12,
+            dividerHeight: 0,
+            labelColor: Colors.white,
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: MyColors.themeColors[300],
+            ),
             indicatorSize: TabBarIndicatorSize.tab,
             splashBorderRadius: BorderRadius.circular(10.sp),
             indicatorPadding: EdgeInsets.all(6.sp),
@@ -210,7 +213,7 @@ class _UnitContentPageState extends State<UnitContentPage>
             scrollController: scrollController,
           ),
           PassageTab(passageArgs: passageArgs!),
-          QuizTab(passageArgs: passageArgs!),
+          QuizTab(passageArgs: passageArgs!, tabController: tabController!),
           //TimerProgressBar(),
         ],
       ),

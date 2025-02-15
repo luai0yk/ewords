@@ -129,7 +129,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: MyTheme().mainTextStyle,
               ),
               subtitle: Slider(
-                inactiveColor: MyColors.themeColors[100],
+                inactiveColor: MyColors.themeColors[50],
                 thumbColor: MyColors.themeColors[500],
                 value: value,
                 max: 1.5,

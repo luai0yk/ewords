@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class DialogHelper {
@@ -8,7 +10,7 @@ class DialogHelper {
     showGeneralDialog(
       context: context,
       pageBuilder: pageBuilder,
-      barrierLabel: 'animated_dialog',
+      barrierLabel: '${Random().nextInt(100)}',
       barrierDismissible: isDismissible,
       transitionDuration: const Duration(milliseconds: 150),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -19,6 +21,7 @@ class DialogHelper {
           child: child,
         );
       },
+      useRootNavigator: false,
     );
   }
 }
