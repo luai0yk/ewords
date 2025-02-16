@@ -3,13 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class TimerProgressBar extends StatefulWidget {
+  const TimerProgressBar({super.key});
+
   @override
   _TimerProgressBarState createState() => _TimerProgressBarState();
 }
 
 class _TimerProgressBarState extends State<TimerProgressBar> {
   double _progress = 0.0; // Progress value (0.0 to 1.0)
-  int _duration = 10; // Total duration in seconds
+  final int _duration = 10; // Total duration in seconds
   late Timer _timer;
 
   @override
@@ -19,7 +21,7 @@ class _TimerProgressBarState extends State<TimerProgressBar> {
   }
 
   void startProgress() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_progress < 1.0) {
         setState(() {
           _progress += 1 / _duration; // Increment progress
@@ -39,7 +41,7 @@ class _TimerProgressBarState extends State<TimerProgressBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Timer Progress Bar")),
+      appBar: AppBar(title: const Text("Timer Progress Bar")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +58,7 @@ class _TimerProgressBarState extends State<TimerProgressBar> {
             ),
             Text(
               "Progress: ${(_progress * 100).toInt()}%",
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ],
         ),

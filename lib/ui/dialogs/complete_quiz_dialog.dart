@@ -61,8 +61,9 @@ class CompleteQuizDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       )),
                   onPressed: () {
-                    tabController.animateTo(0);
+                    onRestart();
                     Navigator.of(context).pop();
+                    tabController.animateTo(0);
                   },
                   child: Text(
                     'Quit',

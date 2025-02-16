@@ -30,7 +30,7 @@ class QuizScoreCard extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  MyConstants.levels[quizScore.bookId],
+                  MyConstants.levels[quizScore.bookId - 1],
                   style: TextStyle(
                     color: MyColors.themeColors[300],
                     fontWeight: FontWeight.bold,

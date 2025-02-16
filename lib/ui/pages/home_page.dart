@@ -11,7 +11,7 @@ import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../tabs/book_tab.dart';
 import '../tabs/favorite_tab.dart';
-import '../tabs/quiz_all_tab.dart';
+import '../tabs/quiz_scores.dart';
 import '../tabs/settings_tab.dart';
 
 // Global variables to hold word list and pages
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
     pages = [
       BookListPage(scrollController: scrollController),
       FavoriteListPage(scrollController: scrollController),
-      const Quiz(),
+      QuizScores(scrollController: scrollController),
       const SettingsPage(),
     ];
     pageController = PageController(); // Initialize PageController
@@ -108,8 +108,8 @@ class _HomePageState extends State<HomePage> {
                       text: 'favorite'.toUpperCase(), // Text for the second tab
                     ),
                     GButton(
-                      icon: Icons.quiz_rounded,
-                      text: 'quiz'.toUpperCase(), // Text for the third tab
+                      icon: Icons.score_rounded,
+                      text: 'scores'.toUpperCase(), // Text for the third tab
                     ),
                     GButton(
                       icon: Icons.settings_rounded,

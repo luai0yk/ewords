@@ -145,7 +145,8 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                               Text(
                                 ' ${(provider.duration - (provider.progress * provider.duration)).toInt()} / ${provider.duration}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black38,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -165,14 +166,14 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
-                            '${provider.questionNumber} / 20',
+                            '${provider.questionNumber + 1} / 20',
                             style: TextStyle(
                               color: MyColors.themeColors[300],
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        SizedBox(width: 5.h),
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.green[50],
@@ -187,7 +188,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        SizedBox(width: 5.h),
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.red[50],
@@ -282,14 +283,14 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                         }
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          padding: EdgeInsets.symmetric(vertical: 4.h),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: buttonColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
                               ),
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8.sp),
                               shadowColor: Colors.transparent,
                             ),
                             onPressed: () {
@@ -306,7 +307,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                         );
                       }),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 5.h),
                   ],
                 ),
               );
