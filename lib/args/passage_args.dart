@@ -6,5 +6,5 @@ class PassageArgs extends PassageModel {
     required super.bookId,
     required super.passageTitle,
     required super.passage,
-  }) : super(id: "");
+  }) : super(id: -1);
 }

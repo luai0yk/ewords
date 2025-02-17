@@ -65,7 +65,6 @@ class _UnitContentPageState extends State<UnitContentPage>
       (text, start, end, word) {
         if (tabController!.index == 1) {
           ttsProvider!.updateCurrentWordStartEnd(start, end);
-          print(word);
         }
       },
     );
@@ -162,7 +161,7 @@ class _UnitContentPageState extends State<UnitContentPage>
                                 }
                               },
                               icon: isPlaying &&
-                                      ttsProvider!.currentPlayingWordID.isEmpty
+                                      ttsProvider!.currentPlayingWordID == -1
                                   ? const Icon(Icons.stop_rounded)
                                   : const Icon(Icons.volume_up_rounded),
                             );

@@ -13,15 +13,15 @@ class RecentTab {
       required Function(String msg) onError}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Read the last unit opened from SharedPreferences
-    final String unitId = prefs.getString(MyConstants.UNIT_ID) ?? '';
-    final String bookId = prefs.getString(MyConstants.BOOK_ID) ?? '';
+    final int unitId = prefs.getInt(MyConstants.UNIT_ID) ?? -1;
+    final int bookId = prefs.getInt(MyConstants.BOOK_ID) ?? -1;
     final String passageTitle =
         prefs.getString(MyConstants.PASSAGE_TITLE) ?? '';
     final String passage = prefs.getString(MyConstants.PASSAGE) ?? '';
 
     // Check whether there is an existing recent data or not
-    if (unitId.isEmpty ||
-        bookId.isEmpty ||
+    if (unitId == -1 ||
+        bookId == -1 ||
         passageTitle.isEmpty ||
         passage.isEmpty) {
       ErrorHandler.errorHandler(
@@ -50,8 +50,8 @@ class RecentTab {
   key data like Book_Id and Unit_Id ect..*/
   static Future<void> saveRecentTab({required PassageArgs passageArgs}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(MyConstants.UNIT_ID, passageArgs.unitId);
-    await prefs.setString(MyConstants.BOOK_ID, passageArgs.bookId);
+    await prefs.setInt(MyConstants.UNIT_ID, passageArgs.unitId);
+    await prefs.setInt(MyConstants.BOOK_ID, passageArgs.bookId);
     await prefs.setString(MyConstants.PASSAGE_TITLE, passageArgs.passageTitle);
     await prefs.setString(MyConstants.PASSAGE, passageArgs.passage);
   }

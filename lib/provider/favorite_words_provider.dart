@@ -5,13 +5,13 @@ import '../models/favorite_word_model.dart';
 
 class FavoriteWordsProvider extends ChangeNotifier {
   // A set to hold the IDs of favorite words
-  final Set<String> _favoriteIds = <String>{};
+  final Set<int> _favoriteIds = <int>{};
 
   // Check if a word ID is in the favorites
-  bool isFavorite(String id) => _favoriteIds.contains(id);
+  bool isFavorite(int id) => _favoriteIds.contains(id);
 
   // Check if a word is marked as favorite and update the state
-  Future<void> checkFavorites(String id) async {
+  Future<void> checkFavorites(int id) async {
     // Check if the ID exists in favorites in the database
     bool isInFavorite = await FavoriteWordHelper.instance.isFavorite(id);
     if (isInFavorite) {
@@ -24,7 +24,7 @@ class FavoriteWordsProvider extends ChangeNotifier {
   }
 
   // Delete a word from favorites and notify listeners
-  Future<void> deleteFavorite(String id) async {
+  Future<void> deleteFavorite(int id) async {
     await FavoriteWordHelper.instance
         .deleteFavorite(id); // Remove from the database
     _favoriteIds.remove(id); // Remove from local set

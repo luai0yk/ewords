@@ -1,5 +1,7 @@
 class PassageModel {
-  String id, unitId, bookId, passageTitle, passage;
+  int id, unitId, bookId;
+  
+  String passageTitle, passage;
 
   PassageModel({
     required this.id,
@@ -23,9 +25,9 @@ class PassageModel {
 
     // Create a new PassageModel instance from a Map
     return PassageModel(
-      id: map['id'].toString(),
-      unitId: map['unit_id'].toString(),
-      bookId: map['book_id'].toString(),
+      id: map['id'],
+      unitId: map['unit_id'],
+      bookId: map['book_id'],
       passageTitle: title,
       passage: reading,
     );

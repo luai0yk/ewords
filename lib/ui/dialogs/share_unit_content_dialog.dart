@@ -13,19 +13,19 @@ import '../my_widgets/my_snackbar.dart';
 
 class ShareUnitContentDialog extends StatelessWidget {
   final PassageArgs passageArgs;
-  int index;
+  final int index;
 
   ShareUnitContentDialog(
       {super.key, required this.passageArgs, required this.index}) {
     init();
   }
 
-  String wordsToShare = '', passageToShare = '';
+  String? wordsToShare, passageToShare;
   void init() async {
     // Append a footer to the text being shared
     wordsToShare =
         '${await CombineUnitWords.getCombinedWords(passageArgs)}\n\nSent by eWords App';
-    passageToShare += '${passageArgs.passage}\n\nSent by eWords App';
+    passageToShare = '${passageArgs.passage}\n\nSent by eWords App';
   }
 
   @override
@@ -51,7 +51,7 @@ class ShareUnitContentDialog extends StatelessWidget {
                 onPressed: () async {
                   if (index == 0) {
                     WhatsAppShareService.share(
-                      text: wordsToShare,
+                      text: wordsToShare!,
                       onError: (msg) {
                         SnackBarHelper.show(
                           context: context,
@@ -59,9 +59,9 @@ class ShareUnitContentDialog extends StatelessWidget {
                         );
                       },
                     );
-                  } else if (index == 2) {
+                  } else if (index == 1) {
                     WhatsAppShareService.share(
-                      text: passageToShare,
+                      text: passageToShare!,
                       onError: (msg) {
                         SnackBarHelper.show(
                           context: context,
@@ -89,7 +89,7 @@ class ShareUnitContentDialog extends StatelessWidget {
                 onPressed: () async {
                   if (index == 0) {
                     TelegramShareService.share(
-                      text: wordsToShare,
+                      text: wordsToShare!,
                       onError: (msg) {
                         SnackBarHelper.show(
                           context: context,
@@ -97,9 +97,9 @@ class ShareUnitContentDialog extends StatelessWidget {
                         );
                       },
                     );
-                  } else if (index == 2) {
+                  } else if (index == 1) {
                     TelegramShareService.share(
-                      text: passageToShare,
+                      text: passageToShare!,
                       onError: (msg) {
                         SnackBarHelper.show(
                           context: context,
@@ -126,10 +126,10 @@ class ShareUnitContentDialog extends StatelessWidget {
               TextButton(
                 onPressed: () async {
                   if (index == 0) {
-                    Share.share(wordsToShare); // Share words with other apps
+                    Share.share(wordsToShare!); // Share words with other apps
                   } else if (index == 2) {
                     Share.share(
-                        passageToShare); // Share the passage with other apps
+                        passageToShare!); // Share the passage with other apps
                   }
                   Navigator.of(context).pop(); // Close the dialog
                 },

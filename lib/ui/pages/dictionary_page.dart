@@ -7,15 +7,16 @@ import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../my_widgets/my_list_tile.dart';
 
-class DictionaryListPage extends StatefulWidget {
-  const DictionaryListPage({super.key});
+class DictionaryPage extends StatefulWidget {
+  const DictionaryPage({super.key});
 
   @override
-  State<DictionaryListPage> createState() => _DictionaryListPageState();
+  State<DictionaryPage> createState() => _DictionaryPageState();
 }
 
-class _DictionaryListPageState extends State<DictionaryListPage> {
+class _DictionaryPageState extends State<DictionaryPage> {
   late final TextEditingController _controller; // Controller for search input
+  DictionaryProvider? dictionaryProvider;
 
   @override
   void initState() {
@@ -26,6 +27,19 @@ class _DictionaryListPageState extends State<DictionaryListPage> {
     _controller.addListener(() {
       context.read<DictionaryProvider>().search(_controller.text);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    dictionaryProvider = context.read<DictionaryProvider>();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dictionaryProvider!.close();
   }
 
   @override

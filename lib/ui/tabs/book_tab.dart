@@ -1,3 +1,4 @@
+import 'package:ewords/ui/pages/dictionary_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,7 +9,6 @@ import '../../utils/helpers/snackbar_helper.dart';
 import '../../utils/recent_tab.dart';
 import '../my_widgets/my_card.dart';
 import '../my_widgets/my_snackbar.dart';
-import '../pages/dictionary_page.dart';
 import '../pages/units_page.dart';
 
 class BookListPage extends StatelessWidget {
@@ -71,7 +71,7 @@ class BookListPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const DictionaryListPage(),
+                            builder: (context) => const DictionaryPage(),
                           ),
                         );
                       },

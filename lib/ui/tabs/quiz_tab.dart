@@ -89,8 +89,8 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                     // Store the quiz score when quiz finishes
                     QuizScoreHelper.instance.insertQuizScore(
                       QuizScoreModel(
-                        unitId: int.parse(widget.passageArgs.unitId),
-                        bookId: int.parse(widget.passageArgs.bookId),
+                        unitId: widget.passageArgs.unitId,
+                        bookId: widget.passageArgs.bookId,
                         correctAnswers: provider.correctCount,
                       ),
                     );

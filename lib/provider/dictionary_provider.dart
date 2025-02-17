@@ -51,7 +51,11 @@ class DictionaryProvider extends ChangeNotifier {
         return word.word.toLowerCase().contains(query.toLowerCase().trim());
       }).toList();
     }
-    // Notify listeners to update the UI with the new filtered list
     notifyListeners();
+    // Notify listeners to update the UI with the new filtered list
+  }
+
+  void close() {
+    _wordList = _wordData;
   }
 }

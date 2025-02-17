@@ -100,7 +100,7 @@ class _UnitWordListPageState extends State<UnitWordListPage> {
               return MyListTile(
                 onTap: () {},
                 trailing: [
-                  Selector<TTSProvider, String>(
+                  Selector<TTSProvider, int>(
                     selector: (context, provider) =>
                         provider.currentPlayingWordID,
                     builder: (context, currentPlayingWordID, child) {

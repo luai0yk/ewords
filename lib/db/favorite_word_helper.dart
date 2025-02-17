@@ -28,7 +28,7 @@ class FavoriteWordHelper extends DBHelper {
   }
 
   /*Check if a specific word is in the favorite words table*/
-  Future<bool> isFavorite(String id) async {
+  Future<bool> isFavorite(int id) async {
     // Ensure the database instance is correctly initialized
     Database? db = await database;
 
@@ -44,7 +44,7 @@ class FavoriteWordHelper extends DBHelper {
     return favoriteMap.isNotEmpty;
   }
 
-  Future<void> deleteFavorite(String id) async {
+  Future<void> deleteFavorite(int id) async {
     //Obtain a reference to the database.
     Database? db = await database;
 

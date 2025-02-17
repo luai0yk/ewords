@@ -14,12 +14,12 @@ class TTSProvider extends ChangeNotifier {
   }
 
   bool isPlaying = false;
-  String currentPlayingWordID = "";
+   int currentPlayingWordID = -1;
 
-  void play({bool listen = true, String currentPlayingWordID = ""}) {
+  void play({bool listen = true, int currentPlayingWordID = -1}) {
     this.currentPlayingWordID = currentPlayingWordID;
 
-    if (currentPlayingWordID.isEmpty) {
+    if (currentPlayingWordID == -1) {
       isPlaying = true;
     } else {
       isPlaying = false;
@@ -32,7 +32,7 @@ class TTSProvider extends ChangeNotifier {
 
   void stop({bool listen = true}) {
     isPlaying = false;
-    currentPlayingWordID = "";
+    currentPlayingWordID = -1;
     if (listen) {
       notifyListeners();
     }

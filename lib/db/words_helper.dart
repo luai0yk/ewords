@@ -16,14 +16,14 @@ class WordsHelper extends DBHelper {
 
   /*Getting words from database (words.db) depending the query*/
   Future<List<WordModel>> getWords(
-      {String unitId = '', String bookId = ''}) async {
+      {int unitId = -1 , int bookId = -1}) async {
     /*Initializing database variable with the db function defined above*/
     var db = await database;
     /*A map to holds retrieved data from the database (words.db)*/
     List<Map<String, dynamic>> wordMap = [];
 
     /*If parameters are not passed the function will retrieve all data*/
-    if (unitId.isEmpty) {
+    if (unitId == -1) {
       wordMap = await db!.query(WORDS_TABLE_NAME);
     }
     /*If parameters are passed the function will retrieve data based on Book_Id and Unit_Id  */
