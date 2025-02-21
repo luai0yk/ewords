@@ -64,7 +64,7 @@ class DBHelper {
     await db.execute(
       '''
       CREATE TABLE "$QUIZ_TABLE_NAME" (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         unit_id INTEGER NOT NULL,
         book_id INTEGER NOT NULL,
         correct_answers INTEGER NOT NULL

@@ -19,12 +19,14 @@ class FavoriteWordsProvider extends ChangeNotifier {
     } else {
       _favoriteIds.remove(id); // Remove ID from favorites if it doesn't
     }
+
+    print('checked favs');
     // Notify listeners to update UI
     notifyListeners();
   }
 
   // Delete a word from favorites and notify listeners
-  Future<void> deleteFavorite(int id) async {
+  Future<void> deleteFavorite({required int id}) async {
     await FavoriteWordHelper.instance
         .deleteFavorite(id); // Remove from the database
     _favoriteIds.remove(id); // Remove from local set

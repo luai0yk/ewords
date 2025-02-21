@@ -91,8 +91,9 @@ class FavoriteListPage extends StatelessWidget {
                       // Icon button to delete favorite
                       IconButton(
                         onPressed: () async {
-                          await favoriteWordsProvider
-                              .deleteFavorite(favorite.id);
+                          await favoriteWordsProvider.deleteFavorite(
+                            id: favorite.id,
+                          );
                         },
                         icon: Icon(
                           Icons.delete_rounded,

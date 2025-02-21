@@ -1,3 +1,4 @@
+import 'package:ewords/ui/tabs/home_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -9,9 +10,8 @@ import '../../models/word_model.dart';
 import '../../provider/gnav_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
-import '../tabs/book_tab.dart';
 import '../tabs/favorite_tab.dart';
-import '../tabs/quiz_scores.dart';
+import '../tabs/scores_tab.dart';
 import '../tabs/settings_tab.dart';
 
 // Global variables to hold word list and pages
@@ -37,9 +37,10 @@ class _HomePageState extends State<HomePage> {
 
     // Initialize the list of pages
     pages = [
-      BookListPage(scrollController: scrollController),
+      // BookListPage(scrollController: scrollController),
+      const HomeTab(),
       FavoriteListPage(scrollController: scrollController),
-      QuizScores(scrollController: scrollController),
+      ScoresTab(scrollController: scrollController),
       const SettingsPage(),
     ];
     pageController = PageController(); // Initialize PageController
@@ -100,8 +101,8 @@ class _HomePageState extends State<HomePage> {
                   },
                   tabs: [
                     GButton(
-                      icon: Icons.menu_book_rounded,
-                      text: 'book'.toUpperCase(), // Text for the first tab
+                      icon: Icons.home_rounded,
+                      text: 'home'.toUpperCase(), // Text for the first tab
                     ),
                     GButton(
                       icon: Icons.favorite_rounded,

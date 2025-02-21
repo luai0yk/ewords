@@ -1,10 +1,9 @@
+import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/utils/tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../args/passage_args.dart';
-import '../../db/quiz_score_helper.dart';
 import '../../models/quiz_score_model.dart';
 import '../../provider/quiz_provider.dart';
 import '../../theme/my_colors.dart';
@@ -15,12 +14,12 @@ import '../dialogs/pasue_resume_dialog.dart';
 import '../my_widgets/my_card.dart';
 
 class QuizTab extends StatefulWidget {
-  final PassageArgs passageArgs;
+  final UnitModel unit;
   final TabController tabController;
 
   const QuizTab({
     super.key,
-    required this.passageArgs,
+    required this.unit,
     required this.tabController,
   });
 
@@ -35,18 +34,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _quizProvider = context.read<QuizProvider>();
-    _quizProvider!.loadWords(widget.passageArgs);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   DialogHelper.show(
-    //     context: context,
-    //     pageBuilder: (context, animation, secondaryAnimation) {
-    //       return StartQuizDialog(
-    //         passageArgs: widget.passageArgs,
-    //         tabController: widget.tabController,
-    //       );
-    //     },
-    //   );
-    // });
+    _quizProvider!.loadWords(widget.unit);
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -65,6 +53,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
+      context.read<QuizProvider>().isPaused = true;
       DialogHelper.show(
         context: context,
         isDismissible: false,
@@ -86,11 +75,11 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
               if (isQuizCompleted) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (ModalRoute.of(context)?.isCurrent ?? false) {
-                    // Store the quiz score when quiz finishes
-                    QuizScoreHelper.instance.insertQuizScore(
-                      QuizScoreModel(
-                        unitId: widget.passageArgs.unitId,
-                        bookId: widget.passageArgs.bookId,
+                    provider.insertOrUpdateQuizScore(
+                      score: QuizScoreModel(
+                        id: widget.unit.id,
+                        unitId: widget.unit.unitId,
+                        bookId: widget.unit.bookId,
                         correctAnswers: provider.correctCount,
                       ),
                     );
@@ -103,7 +92,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                           tabController: widget.tabController,
                           onRestart: () {
                             provider.isQuizCompleted.value = false;
-                            provider.loadWords(widget.passageArgs);
+                            provider.loadWords(widget.unit);
                           },
                         );
                       },

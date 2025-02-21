@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:ewords/db/words_helper.dart';
+import 'package:ewords/db/quiz_score_helper.dart';
+import 'package:ewords/models/unit_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../args/passage_args.dart';
+import '../models/quiz_score_model.dart';
 import '../models/word_model.dart';
 
 class QuizProvider extends ChangeNotifier {
@@ -42,19 +44,19 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void loadWords(PassageArgs passageArgs) async {
-    List<WordModel> words = await WordsHelper.instance.getWords(
-      bookId: passageArgs.bookId,
-      unitId: passageArgs.unitId,
-    );
+  void loadWords(UnitModel unit) async {
+    // List<WordModel> words = await WordHelper.instance.getWords(
+    //   bookId: passageArgs.bookId!,
+    //   unitId: passageArgs.unitId!,
+    // );
 
-    if (words.isNotEmpty) {
-      _listWords = words;
+    if (unit.words.isNotEmpty) {
+      _listWords = unit.words;
       _questionNumber = 0;
       _wrongCount = 0;
       _correctCount = 0;
       _updateChoices();
-      notifyListeners();
+      //notifyListeners();
     }
   }
 
@@ -97,7 +99,7 @@ class QuizProvider extends ChangeNotifier {
     _isAnswered = false;
     isPaused = false;
     _startProgress();
-    notifyListeners();
+    //notifyListeners();
   }
 
   void checkAnswer(String selectedAnswer) {
@@ -139,6 +141,49 @@ class QuizProvider extends ChangeNotifier {
     isPaused = !isPaused;
     notifyListeners();
   }
+
+  Future<void> insertOrUpdateQuizScore({required QuizScoreModel score}) async {
+    await QuizScoreHelper.instance.insertOrUpdateQuizScore(
+      QuizScoreModel(
+        id: score.id,
+        unitId: score.unitId,
+        bookId: score.bookId,
+        correctAnswers: score.correctAnswers,
+      ),
+    );
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('current_active_unit', score.id + 1);
+
+    checkPassedUnits(
+      id: score.id,
+      bookId: score.bookId,
+      unitId: score.unitId,
+    );
+  }
+
+  // A set to hold the IDs of passed units
+  final Set<int> _passedUnitIds = <int>{};
+
+  Future<void> checkPassedUnits(
+      {required int id, required int bookId, required int unitId}) async {
+    bool isPassed = await QuizScoreHelper.instance.isPassed(
+      bookId: bookId,
+      unitId: unitId,
+    );
+
+    if (isPassed) {
+      _passedUnitIds.add(id);
+      _passedUnitIds.add(id + 1);
+    } else {
+      _passedUnitIds.remove(id);
+    }
+
+    notifyListeners();
+  }
+
+  // Check if a unit ID is in the passed units
+  bool isPassed(int id) => _passedUnitIds.contains(id);
 
   @override
   void dispose() {

@@ -1,4 +1,4 @@
-import 'package:ewords/args/passage_args.dart';
+import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/services/telegram_share_service.dart';
 import 'package:ewords/services/whatsapp_share_service.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +12,11 @@ import '../../utils/helpers/snackbar_helper.dart';
 import '../my_widgets/my_snackbar.dart';
 
 class ShareUnitContentDialog extends StatelessWidget {
-  final PassageArgs passageArgs;
-  final int index;
+  final UnitModel unit;
+  final int tabIndex;
 
   ShareUnitContentDialog(
-      {super.key, required this.passageArgs, required this.index}) {
+      {super.key, required this.unit, required this.tabIndex}) {
     init();
   }
 
@@ -24,8 +24,8 @@ class ShareUnitContentDialog extends StatelessWidget {
   void init() async {
     // Append a footer to the text being shared
     wordsToShare =
-        '${await CombineUnitWords.getCombinedWords(passageArgs)}\n\nSent by eWords App';
-    passageToShare = '${passageArgs.passage}\n\nSent by eWords App';
+        '${await CombineUnitWords.getCombinedWords(unit.words)}\n\nSent by eWords App';
+    passageToShare = '${unit.passage}\n\nSent by eWords App';
   }
 
   @override
@@ -49,7 +49,7 @@ class ShareUnitContentDialog extends StatelessWidget {
               // WhatsApp share button
               TextButton(
                 onPressed: () async {
-                  if (index == 0) {
+                  if (tabIndex == 0) {
                     WhatsAppShareService.share(
                       text: wordsToShare!,
                       onError: (msg) {
@@ -59,7 +59,7 @@ class ShareUnitContentDialog extends StatelessWidget {
                         );
                       },
                     );
-                  } else if (index == 1) {
+                  } else if (tabIndex == 1) {
                     WhatsAppShareService.share(
                       text: passageToShare!,
                       onError: (msg) {
@@ -87,7 +87,7 @@ class ShareUnitContentDialog extends StatelessWidget {
               // Telegram share button
               TextButton(
                 onPressed: () async {
-                  if (index == 0) {
+                  if (tabIndex == 0) {
                     TelegramShareService.share(
                       text: wordsToShare!,
                       onError: (msg) {
@@ -97,7 +97,7 @@ class ShareUnitContentDialog extends StatelessWidget {
                         );
                       },
                     );
-                  } else if (index == 1) {
+                  } else if (tabIndex == 1) {
                     TelegramShareService.share(
                       text: passageToShare!,
                       onError: (msg) {
@@ -125,9 +125,9 @@ class ShareUnitContentDialog extends StatelessWidget {
               // Other app share button
               TextButton(
                 onPressed: () async {
-                  if (index == 0) {
+                  if (tabIndex == 0) {
                     Share.share(wordsToShare!); // Share words with other apps
-                  } else if (index == 2) {
+                  } else if (tabIndex == 2) {
                     Share.share(
                         passageToShare!); // Share the passage with other apps
                   }

@@ -15,7 +15,6 @@ class PauseResumeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<QuizProvider>().isPaused = true;
-
     return PopScope(
       canPop: false,
       child: BackdropFilter(

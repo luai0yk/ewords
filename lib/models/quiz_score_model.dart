@@ -1,13 +1,13 @@
 class QuizScoreModel {
-  int? id;
-  int unitId, bookId, correctAnswers;
+  int? nextUnitId;
+  int id, unitId, bookId, correctAnswers;
 
-  QuizScoreModel({
-    required this.unitId,
-    required this.bookId,
-    required this.correctAnswers,
-    this.id,
-  });
+  QuizScoreModel(
+      {required this.unitId,
+      required this.bookId,
+      required this.correctAnswers,
+      required this.id,
+      this.nextUnitId});
 
   // Calculate wrong answers
   int get wrongAnswers => 20 - correctAnswers;

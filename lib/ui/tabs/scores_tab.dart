@@ -7,15 +7,15 @@ import 'package:hidable/hidable.dart';
 
 import '../../theme/my_colors.dart';
 
-class QuizScores extends StatefulWidget {
+class ScoresTab extends StatefulWidget {
   final ScrollController scrollController;
-  const QuizScores({super.key, required this.scrollController});
+  const ScoresTab({super.key, required this.scrollController});
 
   @override
-  State<QuizScores> createState() => _QuizScoresState();
+  State<ScoresTab> createState() => _ScoresTabState();
 }
 
-class _QuizScoresState extends State<QuizScores> {
+class _ScoresTabState extends State<ScoresTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

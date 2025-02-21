@@ -20,6 +20,33 @@ class QuizScoreHelper extends DBHelper {
     return await db!.insert(QUIZ_TABLE_NAME, quizScoreModel.toMap());
   }
 
+  Future<int> updateQuizScore(int id, int correctAnswers) async {
+    Database? db = await database;
+    return await db!.update(
+      QUIZ_TABLE_NAME,
+      {'correct_answers': correctAnswers},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // New method to insert or update quiz score
+  Future<void> insertOrUpdateQuizScore(QuizScoreModel quizScoreModel) async {
+    Database? db = await database;
+    final List<Map<String, dynamic>> response = await db!.query(
+      QUIZ_TABLE_NAME,
+      where: 'unit_id = ? AND book_id = ?',
+      whereArgs: [quizScoreModel.unitId, quizScoreModel.bookId],
+    );
+
+    if (response.isEmpty) {
+      await insertQuizScore(quizScoreModel);
+    } else {
+      await updateQuizScore(
+          response.first['id'], quizScoreModel.correctAnswers);
+    }
+  }
+
   Future<List<QuizScoreModel>> getQuizScores() async {
     Database? db = await database;
     final List<Map<String, dynamic>> maps = await db!.query(QUIZ_TABLE_NAME);
@@ -32,13 +59,30 @@ class QuizScoreHelper extends DBHelper {
     );
   }
 
-  Future<int> updateQuizScore(QuizScoreModel quizScoreModel) async {
+  Future<bool> isPassed({required int bookId, required int unitId}) async {
     Database? db = await database;
-    return await db!.update(
-      'quiz_scores',
-      quizScoreModel.toMap(),
-      where: 'id = ?',
-      whereArgs: [quizScoreModel.id],
+    final List<Map<String, dynamic>> response = await db!.query(
+      QUIZ_TABLE_NAME,
+      columns: ['correct_answers'],
+      where: 'book_id = ? and unit_id = ?',
+      whereArgs: [bookId, unitId],
     );
+
+    bool isPassed = false;
+    int correctAnswers = 0;
+
+    if (response.isEmpty) {
+      isPassed = false;
+    } else {
+      correctAnswers = response.first['correct_answers'];
+      double score = (correctAnswers / 20) * 100;
+      if (score >= 50) {
+        isPassed = true;
+      } else {
+        isPassed = false;
+      }
+    }
+
+    return isPassed;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:ewords/utils/helpers/bottom_sheet_helper.dart';
+import 'package:ewords/models/unit_model.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,19 +6,19 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hidable/hidable.dart';
 import 'package:provider/provider.dart';
 
-import '../../args/passage_args.dart';
 import '../../provider/settings_provider.dart';
 import '../../provider/tabbar_icons_visibility_provider.dart';
 import '../../provider/tts_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
-import '../../ui/tabs/passage_tab.dart';
 import '../../utils/combine_unit_words.dart';
-import '../../utils/recent_tab.dart';
+import '../../utils/helpers/bottom_sheet_helper.dart';
+import '../../utils/recent_unit.dart';
 import '../../utils/tts.dart';
 import '../dialogs/share_unit_content_dialog.dart';
+import '../tabs/passage_tab.dart';
 import '../tabs/quiz_tab.dart';
-import '../tabs/unit_words_tab.dart';
+import '../tabs/words_tab.dart';
 
 class UnitContentPage extends StatefulWidget {
   const UnitContentPage({super.key});
@@ -33,7 +33,7 @@ class _UnitContentPageState extends State<UnitContentPage>
 
   final ScrollController scrollController = ScrollController();
 
-  PassageArgs? passageArgs;
+  UnitModel? unit;
 
   FlutterTts? flutterTts;
 
@@ -81,9 +81,6 @@ class _UnitContentPageState extends State<UnitContentPage>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Ensure passageArgs is only set once
-    passageArgs ??= ModalRoute.of(context)!.settings.arguments as PassageArgs;
-
     /*The speech rate or speed
     * its value comes from the settings page (Slider's value)*/
     flutterTts!.setSpeechRate(context.read<SettingsProvider>().speechRate!);
@@ -97,7 +94,10 @@ class _UnitContentPageState extends State<UnitContentPage>
 
     /*Initialization for FlutterTts which handle text to speak*/
     /*Save key data once the page is opened*/
-    RecentTab.saveRecentTab(passageArgs: passageArgs!);
+
+    unit ??= ModalRoute.of(context)!.settings.arguments as UnitModel;
+
+    RecentUnit.saveRecentTab(index: unit!.id - 1);
   }
 
   @override
@@ -109,15 +109,13 @@ class _UnitContentPageState extends State<UnitContentPage>
 
   @override
   Widget build(BuildContext context) {
-    // MyTheme.initialize(context);
-    // myContext = context;
     return Scaffold(
       appBar: Hidable(
         deltaFactor: 0.06,
         controller: scrollController,
         preferredWidgetSize: Size.fromHeight(130.sp),
         child: AppBar(
-          title: Text(passageArgs!.passageTitle),
+          title: Text(unit!.passageTitle),
           actions: [
             Selector<TabBarIconsVisibilityProvider, int>(
               builder: (context, value, child) {
@@ -130,8 +128,8 @@ class _UnitContentPageState extends State<UnitContentPage>
                             BottomSheetHelper.show(
                               context: context,
                               builder: (context) => ShareUnitContentDialog(
-                                passageArgs: passageArgs!,
-                                index: tabController!.index,
+                                unit: unit!,
+                                tabIndex: tabController!.index,
                               ),
                             );
                           },
@@ -152,10 +150,12 @@ class _UnitContentPageState extends State<UnitContentPage>
                                 } else {
                                   if (tabController!.index == 0) {
                                     flutterTts!.speak(
-                                        await CombineUnitWords.getCombinedWords(
-                                            passageArgs!));
+                                      await CombineUnitWords.getCombinedWords(
+                                        unit!.words,
+                                      ),
+                                    );
                                   } else if (tabController!.index == 1) {
-                                    flutterTts!.speak(passageArgs!.passage);
+                                    flutterTts!.speak(unit!.passage);
                                   }
                                   ttsProvider!.play();
                                 }
@@ -207,12 +207,16 @@ class _UnitContentPageState extends State<UnitContentPage>
         dragStartBehavior: DragStartBehavior.start,
         controller: tabController,
         children: [
-          UnitWordListPage(
-            passageArgs: passageArgs!,
+          WordsTab(
+            unit: unit!,
             scrollController: scrollController,
           ),
-          PassageTab(passageArgs: passageArgs!),
-          QuizTab(passageArgs: passageArgs!, tabController: tabController!),
+          PassageTab(
+              passage: unit!.passage, scrollController: scrollController),
+          QuizTab(
+            unit: unit!,
+            tabController: tabController!,
+          ),
           //TimerProgressBar(),
         ],
       ),

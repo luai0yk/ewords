@@ -1,4 +1,3 @@
-import 'package:ewords/args/passage_args.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -8,13 +7,19 @@ import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 
 class PassageTab extends StatelessWidget {
-  final PassageArgs passageArgs;
-  const PassageTab({super.key, required this.passageArgs});
+  final String passage;
+  final ScrollController scrollController;
+  const PassageTab({
+    super.key,
+    required this.passage,
+    required this.scrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
+      controller: scrollController,
       physics: const BouncingScrollPhysics(),
       child: Container(
         padding: EdgeInsets.all(15.sp),
@@ -31,13 +36,11 @@ class PassageTab extends StatelessWidget {
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
-                    text: passageArgs.passage
-                        .substring(0, currentWordStartEnd['start']),
+                    text: passage.substring(0, currentWordStartEnd['start']),
                   ),
                   currentWordStartEnd['start'] != null
                       ? TextSpan(
-                          text: passageArgs.passage.substring(
-                              currentWordStartEnd['start']!,
+                          text: passage.substring(currentWordStartEnd['start']!,
                               currentWordStartEnd['end']!),
                           style: Theme.of(context)
                               .textTheme
@@ -52,8 +55,7 @@ class PassageTab extends StatelessWidget {
                       : const TextSpan(text: ''),
                   currentWordStartEnd['end'] != null
                       ? TextSpan(
-                          text: passageArgs.passage
-                              .substring(currentWordStartEnd['end']!),
+                          text: passage.substring(currentWordStartEnd['end']!),
                           style: MyTheme().secondaryTextStyle.copyWith(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,

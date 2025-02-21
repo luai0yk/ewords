@@ -2,21 +2,20 @@ import 'package:ewords/db/db_helper.dart';
 
 import '../models/word_model.dart';
 
-class WordsHelper extends DBHelper {
-  static WordsHelper? _wordsHelper;
+class WordHelper extends DBHelper {
+  static WordHelper? _wordsHelper;
 
   // Lazy singleton getter
-  static WordsHelper get instance {
-    _wordsHelper ??= WordsHelper._intern();
+  static WordHelper get instance {
+    _wordsHelper ??= WordHelper._intern();
     return _wordsHelper!;
   }
 
   //To prevent the instantiation of the WordsHelper class
-  WordsHelper._intern();
+  WordHelper._intern();
 
   /*Getting words from database (words.db) depending the query*/
-  Future<List<WordModel>> getWords(
-      {int unitId = -1 , int bookId = -1}) async {
+  Future<List<WordModel>> getWords({int unitId = -1, int bookId = -1}) async {
     /*Initializing database variable with the db function defined above*/
     var db = await database;
     /*A map to holds retrieved data from the database (words.db)*/

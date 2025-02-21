@@ -1,9 +1,10 @@
-import 'package:ewords/db/unit_helper.dart';
 import 'package:ewords/provider/quiz_provider.dart';
+import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../provider/favorite_words_provider.dart';
 import '../../provider/gnav_provider.dart';
@@ -12,15 +13,11 @@ import '../provider/dictionary_provider.dart';
 import '../provider/settings_provider.dart';
 import '../provider/tts_provider.dart';
 import '../theme/my_theme.dart';
+import 'db/unit_helper.dart';
 import 'ui/pages/home_page.dart';
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-
-  // SystemChrome.setEnabledSystemUIMode(
-  //   SystemUiMode.manual,
-  //   overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
-  // );
 
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
@@ -57,10 +54,20 @@ class _MyAppState extends State<MyApp> {
   }
 
   void init() async {
-    // This is where you can initialize the resources needed by your app while
-    // the splash screen is displayed.  Remove the following example because
-    // delaying the user experience is a bad design practice!
+    // Fetch units while the splash screen is displayed
+    await UnitHelper.instance.getUnits();
+    // Remove the splash screen after the units are fetched
     FlutterNativeSplash.remove();
+
+    // try {
+    // var res = await QuizScoreHelper.instance.isPassed(bookId: 1, unitId: 3);
+    // print('passed $res');
+    // } catch (e) {
+    //   print(e);
+    // }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int index = prefs.getInt(MyConstants.LAST_UNIT_INDEX) ?? 0;
+    print('index : $index');
   }
 
   @override

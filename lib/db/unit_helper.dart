@@ -1,5 +1,5 @@
 import 'package:ewords/db/db_helper.dart';
-import 'package:ewords/db/words_helper.dart';
+import 'package:ewords/db/word_helper.dart';
 import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/models/word_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -21,17 +21,34 @@ class UnitHelper extends DBHelper {
     List<Map<String, dynamic>> map = await db!.query(PASSAGES_TABLE_NAME);
 
     List<UnitModel> units = [];
-    for (var item in map) {
-      List<WordModel> wordsList = await WordsHelper.instance.getWords(
-        bookId: item['book_id'],
-        unitId: item['unit_id'],
+
+    for (var entry in map) {
+      List<WordModel> wordsList = await WordHelper.instance.getWords(
+        bookId: entry['book_id'],
+        unitId: entry['unit_id'],
       );
-      units.add(UnitModel(
-        bookId: item['book_id'],
-        unitId: item['unit_id'],
-        passage: item['passage'],
-        words: wordsList,
-      ));
+      units.add(UnitModel.fromMap(entry, words: wordsList));
+    }
+
+    return units;
+  }
+
+  Future<List<UnitModel>> getUnit({int bookId = -1, int unitId = -1}) async {
+    Database? db = await database;
+    List<Map<String, dynamic>> map = await db!.query(
+      PASSAGES_TABLE_NAME,
+      where: 'book_id = ? AND unit_id = ?',
+      whereArgs: [bookId, unitId],
+    );
+
+    List<UnitModel> units = [];
+
+    for (var entry in map) {
+      List<WordModel> wordsList = await WordHelper.instance.getWords(
+        bookId: entry['book_id'],
+        unitId: entry['unit_id'],
+      );
+      units.add(UnitModel.fromMap(entry, words: wordsList));
     }
 
     return units;
