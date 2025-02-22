@@ -63,7 +63,7 @@ class PauseResumeDialog extends StatelessWidget {
                       )),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    tabController.animateTo(0);
+                    Navigator.of(context).pop();
                   },
                   child: Text(
                     'Quit',

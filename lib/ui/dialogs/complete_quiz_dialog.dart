@@ -63,7 +63,7 @@ class CompleteQuizDialog extends StatelessWidget {
                   onPressed: () {
                     onRestart();
                     Navigator.of(context).pop();
-                    tabController.animateTo(0);
+                    Navigator.of(context).pop();
                   },
                   child: Text(
                     'Quit',

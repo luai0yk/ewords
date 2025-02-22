@@ -12,11 +12,10 @@ class RecentUnit {
       required Function(int index) onSuccess}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Read the last unit opened from SharedPreferences
-    final int unitId = prefs.getInt(MyConstants.UNIT_ID) ?? -1;
-    final int bookId = prefs.getInt(MyConstants.BOOK_ID) ?? -1;
+    final int lastUnitIndex = prefs.getInt(MyConstants.LAST_UNIT_INDEX) ?? -1;
 
     // Check whether there is an existing recent data or not
-    if (unitId == -1 || bookId == -1) {
+    if (lastUnitIndex == -1) {
       ErrorHandler.errorHandler(
         message: 'No recent unit found',
         onError: onError,

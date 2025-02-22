@@ -1,10 +1,9 @@
 import 'package:ewords/provider/quiz_provider.dart';
-import 'package:ewords/utils/constants.dart';
+import 'package:ewords/provider/units_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../provider/favorite_words_provider.dart';
 import '../../provider/gnav_provider.dart';
@@ -13,7 +12,6 @@ import '../provider/dictionary_provider.dart';
 import '../provider/settings_provider.dart';
 import '../provider/tts_provider.dart';
 import '../theme/my_theme.dart';
-import 'db/unit_helper.dart';
 import 'ui/pages/home_page.dart';
 
 void main() async {
@@ -33,6 +31,7 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) => TabBarIconsVisibilityProvider()),
         ChangeNotifierProvider(create: (context) => QuizProvider()),
+        ChangeNotifierProvider(create: (context) => UnitsProvider()),
       ],
       child: const MyApp(), // Start the app with MyApp as the root widget
     ),
@@ -55,19 +54,12 @@ class _MyAppState extends State<MyApp> {
 
   void init() async {
     // Fetch units while the splash screen is displayed
-    await UnitHelper.instance.getUnits();
+    await Provider.of<UnitsProvider>(context, listen: false).fetchUnits();
     // Remove the splash screen after the units are fetched
     FlutterNativeSplash.remove();
 
-    // try {
-    // var res = await QuizScoreHelper.instance.isPassed(bookId: 1, unitId: 3);
-    // print('passed $res');
-    // } catch (e) {
-    //   print(e);
-    // }
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int index = prefs.getInt(MyConstants.LAST_UNIT_INDEX) ?? 0;
-    print('index : $index');
+    // int score = await QuizScoreHelper.instance.getCorrectAnswersById(id: 1);
+    // print('score: $score');
   }
 
   @override

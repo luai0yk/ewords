@@ -153,7 +153,7 @@ class QuizProvider extends ChangeNotifier {
     );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('current_active_unit', score.id + 1);
+    prefs.setInt('current_active_unit', (score.id + 1));
 
     checkPassedUnits(
       id: score.id,

@@ -25,8 +25,8 @@ class QuizScoreHelper extends DBHelper {
     return await db!.update(
       QUIZ_TABLE_NAME,
       {'correct_answers': correctAnswers},
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ? AND correct_answers < ?',
+      whereArgs: [id, correctAnswers],
     );
   }
 
@@ -58,6 +58,17 @@ class QuizScoreHelper extends DBHelper {
       },
     );
   }
+  //
+  // Future<int> getCorrectAnswersById({required int id}) async {
+  //   Database? db = await database;
+  //   List<Map<String, dynamic>> map = await db!.query(
+  //     QUIZ_TABLE_NAME,
+  //     where: 'id = ?',
+  //     whereArgs: [id],
+  //   );
+  //
+  //   return map.first['correct_answers'];
+  // }
 
   Future<bool> isPassed({required int bookId, required int unitId}) async {
     Database? db = await database;
