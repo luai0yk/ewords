@@ -95,6 +95,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                       fontWeight: FontWeight.bold),
                   onTabChange: (value) {
+                    MyTheme.initialize(context);
                     selectedTab = value; // Update selected tab index
                     pageController!
                         .jumpToPage(selectedTab); // Change the page in PageView

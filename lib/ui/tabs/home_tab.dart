@@ -3,7 +3,6 @@ import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
 import 'package:ewords/theme/my_colors.dart';
 import 'package:ewords/theme/my_theme.dart';
-import 'package:ewords/ui/my_widgets/my_card.dart';
 import 'package:ewords/ui/pages/dictionary_page.dart';
 import 'package:ewords/ui/pages/unit_content_page.dart';
 import 'package:ewords/utils/recent_unit.dart';
@@ -13,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/helpers/snackbar_helper.dart';
+import '../my_widgets/my_card.dart';
 import '../my_widgets/my_snackbar.dart';
 
 class HomeTab extends StatefulWidget {
@@ -24,48 +24,35 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   SharedPreferences? prefs;
+  int? currentActiveUnit;
   final ScrollController _scrollController = ScrollController();
-  //final List<UnitModel> _units = [];
-
-  @override
-  void initState() {
-    super.initState();
-    init();
-  }
 
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
-    // WidgetsBinding.instance.addPostFrameCallback(
-    //   (timeStamp) {
-    //     scrollToActiveUnit();
-    //   },
-    // );
+    currentActiveUnit = prefs!.getInt('current_active_unit') ?? 1;
   }
 
-  // void scrollToActiveUnit() {
-  //   if (prefs != null) {
-  //     int? currentActiveUnit = prefs!.getInt('current_active_unit');
-  //     if (currentActiveUnit != null) {
-  //       int index = currentActiveUnit - 1;
-  //       if (index >= 0 && index < units.length) {
-  //         _scrollController.jumpTo(
-  //           index * 100.0,
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    init();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          Selector<UnitsProvider, List<UnitModel>>(
+          Selector<UnitsProvider, List<UnitModel>?>(
             selector: (context, provider) {
-              return provider.units!;
+              return provider.units;
             },
             builder: (context, units, child) {
+              if (units == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
               return ListView.builder(
                 controller: _scrollController,
                 padding: EdgeInsets.symmetric(
@@ -85,9 +72,8 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _buildListItem(int index, units) {
+  Widget _buildListItem(int index, List<UnitModel> units) {
     final UnitModel unit = units[index];
-    final int currentActiveUnit = prefs?.getInt('current_active_unit') ?? 1;
     Alignment alignment = _getAlignment(index);
 
     context.read<QuizProvider>().checkPassedUnits(
@@ -153,19 +139,6 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                   ),
                 ),
-                isPassed
-                    ? Container(
-                        margin: const EdgeInsets.only(top: 5),
-                        width: 40.w,
-                        child: LinearProgressIndicator(
-                          color: MyColors.themeColors[300],
-                          backgroundColor: MyColors.themeColors[50],
-                          minHeight: 4.h,
-                          value: 0.5,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      )
-                    : const Text(' '),
               ],
             ),
           ),
@@ -178,9 +151,10 @@ class _HomeTabState extends State<HomeTab> {
     return MyCard(
       margin: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top,
-        left: MediaQuery.of(context).padding.top,
-        right: MediaQuery.of(context).padding.top,
+        left: MediaQuery.of(context).padding.top / 2,
+        right: MediaQuery.of(context).padding.top / 2,
       ),
+      padding: EdgeInsets.all(4.sp),
       width: double.infinity,
       height: 50.h,
       child: SizedBox(
