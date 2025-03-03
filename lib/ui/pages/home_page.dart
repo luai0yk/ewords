@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hidable/hidable.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -102,20 +103,32 @@ class _HomePageState extends State<HomePage> {
                   },
                   tabs: [
                     GButton(
-                      icon: Icons.home_rounded,
-                      text: 'home'.toUpperCase(), // Text for the first tab
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedHome05,
+                        color: MyColors.themeColors[300]!,
+                      ).icon,
+                      text: 'home'.toUpperCase(),
                     ),
                     GButton(
-                      icon: Icons.favorite_rounded,
-                      text: 'favorite'.toUpperCase(), // Text for the second tab
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedFavourite,
+                        color: MyColors.themeColors[300]!,
+                      ).icon,
+                      text: 'favorite'.toUpperCase(),
                     ),
                     GButton(
-                      icon: Icons.score_rounded,
-                      text: 'scores'.toUpperCase(), // Text for the third tab
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedPercent,
+                        color: MyColors.themeColors[300]!,
+                      ).icon,
+                      text: 'scores'.toUpperCase(),
                     ),
                     GButton(
-                      icon: Icons.settings_rounded,
-                      text: 'settings'.toUpperCase(), // Text for the fourth tab
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedSettings01,
+                        color: MyColors.themeColors[300]!,
+                      ).icon,
+                      text: 'settings'.toUpperCase(),
                     ),
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'package:ewords/db/favorite_word_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hidable/hidable.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/favorite_word_model.dart';
@@ -43,7 +44,8 @@ class FavoriteListPage extends StatelessWidget {
               // Handle loading state
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                    child: CircularProgressIndicator(strokeWidth: 10));
+                  child: CircularProgressIndicator(strokeWidth: 10),
+                );
               }
               // Handle error state
               else if (snapshot.hasError) {
@@ -95,9 +97,10 @@ class FavoriteListPage extends StatelessWidget {
                             id: favorite.id,
                           );
                         },
-                        icon: Icon(
-                          Icons.delete_rounded,
-                          color: MyColors.themeColors[300],
+                        tooltip: 'Delete',
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedDelete01,
+                          color: MyColors.themeColors[300]!,
                         ),
                       ),
                     ],

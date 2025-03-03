@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/dictionary_provider.dart';
@@ -52,6 +53,16 @@ class _DictionaryPageState extends State<DictionaryPage> {
           SliverAppBar(
             expandedHeight: 90.sp,
             collapsedHeight: 110.sp,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              tooltip: 'Back',
+              icon: HugeIcon(
+                icon: HugeIcons.strokeRoundedArrowLeft01,
+                color: MyColors.themeColors[300]!,
+              ),
+            ),
             snap: true,
             floating: true,
             pinned: false,
@@ -78,9 +89,9 @@ class _DictionaryPageState extends State<DictionaryPage> {
                     decoration: InputDecoration(
                       hintText: 'SEARCH..', // Placeholder text
                       contentPadding: EdgeInsets.zero,
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        color: MyColors.themeColors[300],
+                      prefixIcon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedSearch01,
+                        color: MyColors.themeColors[300]!,
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide:

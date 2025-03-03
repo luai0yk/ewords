@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hidable/hidable.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/settings_provider.dart';
@@ -116,6 +117,16 @@ class _UnitContentPageState extends State<UnitContentPage>
         preferredWidgetSize: Size.fromHeight(130.sp),
         child: AppBar(
           title: Text(unit!.passageTitle),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            tooltip: 'Back',
+            icon: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowLeft01,
+              color: MyColors.themeColors[300]!,
+            ),
+          ),
           actions: [
             Selector<TabBarIconsVisibilityProvider, int>(
               builder: (context, value, child) {
@@ -133,8 +144,10 @@ class _UnitContentPageState extends State<UnitContentPage>
                               ),
                             );
                           },
-                          icon: const Icon(
-                            Icons.share_rounded,
+                          tooltip: 'Share',
+                          icon: HugeIcon(
+                            icon: HugeIcons.strokeRoundedShare08,
+                            color: MyColors.themeColors[300]!,
                           ),
                         ),
                         Selector<TTSProvider, bool>(
@@ -160,10 +173,17 @@ class _UnitContentPageState extends State<UnitContentPage>
                                   ttsProvider!.play();
                                 }
                               },
+                              tooltip: isPlaying ? 'Stop' : 'Speak',
                               icon: isPlaying &&
                                       ttsProvider!.currentPlayingWordID == -1
-                                  ? const Icon(Icons.stop_rounded)
-                                  : const Icon(Icons.volume_up_rounded),
+                                  ? HugeIcon(
+                                      icon: HugeIcons.strokeRoundedStop,
+                                      color: MyColors.themeColors[300]!,
+                                    )
+                                  : HugeIcon(
+                                      icon: HugeIcons.strokeRoundedMegaphone02,
+                                      color: MyColors.themeColors[300]!,
+                                    ),
                             );
                           },
                         ),

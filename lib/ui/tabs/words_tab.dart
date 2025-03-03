@@ -3,6 +3,7 @@ import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/utils/tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/favorite_word_model.dart';
@@ -77,11 +78,11 @@ class _WordsTabState extends State<WordsTab> {
                       ttsProvider!.play(currentPlayingWordID: word.id);
                     }
                   },
-                  icon: Icon(
-                    currentPlayingWordID == word.id
-                        ? Icons.stop_rounded
-                        : Icons.volume_up_rounded,
-                    color: MyColors.themeColors[300],
+                  icon: HugeIcon(
+                    icon: currentPlayingWordID == word.id
+                        ? HugeIcons.strokeRoundedStop
+                        : HugeIcons.strokeRoundedMegaphone02,
+                    color: MyColors.themeColors[300]!,
                   ),
                 );
               },
@@ -110,10 +111,11 @@ class _WordsTabState extends State<WordsTab> {
                         .read<FavoriteWordsProvider>()
                         .checkFavorites(word.id);
                   },
-                  icon: Icon(
-                    isFavorite
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_outline_rounded,
+                  icon: HugeIcon(
+                    icon: isFavorite
+                        ? HugeIcons.strokeRoundedHeartCheck
+                        : HugeIcons.strokeRoundedFavourite,
+                    color: MyColors.themeColors[300]!,
                   ),
                   color: MyColors.themeColors[300],
                 );

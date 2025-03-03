@@ -153,7 +153,18 @@ class QuizProvider extends ChangeNotifier {
     );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('current_active_unit', (score.id + 1));
+
+    if (score.totalScore >= 50) {
+      prefs.setInt('current_active_unit', (score.id + 1));
+    }
+
+    if (score.totalScore >= 90) {
+      prefs.setInt('diamond', (prefs.getInt('diamond') ?? 5 + 5));
+    } else if (score.totalScore >= 75) {
+      prefs.setInt('diamond', (prefs.getInt('diamond') ?? 5 + 3));
+    } else if (score.totalScore >= 50) {
+      prefs.setInt('diamond', (prefs.getInt('diamond') ?? 5 + 2));
+    }
 
     checkPassedUnits(
       id: score.id,

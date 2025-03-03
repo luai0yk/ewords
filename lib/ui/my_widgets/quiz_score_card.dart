@@ -55,6 +55,54 @@ class QuizScoreCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    LinearProgressIndicator(
+                      color: Colors.green[300],
+                      backgroundColor: Colors.green[50],
+                      value: quizScore.correctAnswers / 20,
+                      minHeight: 15.h,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    Text(
+                      '  Correct ${quizScore.correctAnswers}',
+                      style: const TextStyle(
+                        color: Colors.black38,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    LinearProgressIndicator(
+                      color: Colors.red[300],
+                      backgroundColor: Colors.red[50],
+                      value: quizScore.wrongAnswers / 20,
+                      minHeight: 15.h,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    Text(
+                      '  Wrong ${quizScore.wrongAnswers}',
+                      style: const TextStyle(
+                        color: Colors.black38,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
           Stack(
             alignment: Alignment.centerLeft,
             children: [
@@ -67,46 +115,6 @@ class QuizScoreCard extends StatelessWidget {
               ),
               Text(
                 '  Score ${quizScore.totalScore.toInt()}%',
-                style: const TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          Stack(
-            alignment: Alignment.centerLeft,
-            children: [
-              LinearProgressIndicator(
-                color: Colors.green[300],
-                backgroundColor: Colors.green[50],
-                value: quizScore.correctAnswers / 20,
-                minHeight: 15.h,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              Text(
-                '  Correct ${quizScore.correctAnswers}',
-                style: const TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          Stack(
-            alignment: Alignment.centerLeft,
-            children: [
-              LinearProgressIndicator(
-                color: Colors.red[300],
-                backgroundColor: Colors.red[50],
-                value: quizScore.wrongAnswers / 20,
-                minHeight: 15.h,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              Text(
-                '  Wrong ${quizScore.wrongAnswers}',
                 style: const TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.bold,

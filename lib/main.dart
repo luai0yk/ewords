@@ -17,7 +17,9 @@ import 'ui/pages/home_page.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  FlutterNativeSplash.preserve(
+    widgetsBinding: widgetsBinding,
+  );
 
   runApp(
     MultiProvider(
@@ -55,6 +57,8 @@ class _MyAppState extends State<MyApp> {
   void init() async {
     // Fetch units while the splash screen is displayed
     await Provider.of<UnitsProvider>(context, listen: false).fetchUnits();
+    // Fetch units while the splash screen is displayed
+    await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
     // Remove the splash screen after the units are fetched
     FlutterNativeSplash.remove();
 

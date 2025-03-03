@@ -5,6 +5,7 @@ import 'package:ewords/ui/dialogs/download_tts_assistant_dialog.dart';
 import 'package:ewords/utils/helpers/dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,8 +60,14 @@ class _SettingsPageState extends State<SettingsPage> {
           // List tile for theme selection
           ListTile(
             leading: Theme.of(context).brightness == Brightness.light
-                ? const Icon(Icons.light_mode_rounded)
-                : const Icon(Icons.dark_mode_rounded),
+                ? HugeIcon(
+                    icon: HugeIcons.strokeRoundedSun01,
+                    color: MyColors.themeColors[300]!,
+                  )
+                : HugeIcon(
+                    icon: HugeIcons.strokeRoundedMoon02,
+                    color: MyColors.themeColors[300]!,
+                  ),
             title: Text(
               'Theme',
               style: MyTheme().mainTextStyle,
@@ -92,9 +99,10 @@ class _SettingsPageState extends State<SettingsPage> {
               builder: (context, value, child) {
                 return Text(
                   value == 'en-GB' ? 'UK' : 'US',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w400,
+                    color: MyColors.themeColors[300],
                   ),
                 );
               },
@@ -123,7 +131,10 @@ class _SettingsPageState extends State<SettingsPage> {
           Selector<SettingsProvider, double>(
             selector: (ctx, val) => val.speechRate!,
             builder: (context, value, child) => ListTile(
-              leading: const Icon(Icons.speed_rounded),
+              leading: HugeIcon(
+                icon: HugeIcons.strokeRoundedMegaphone02,
+                color: MyColors.themeColors[300]!,
+              ),
               title: Text(
                 'Speech Rate',
                 style: MyTheme().mainTextStyle,
@@ -153,7 +164,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // List tile for TTS download option
           ListTile(
-            leading: const Icon(Icons.download_rounded),
+            leading: HugeIcon(
+              icon: HugeIcons.strokeRoundedDownload02,
+              color: MyColors.themeColors[300]!,
+            ),
             title: Text(
               'Download TTS',
               style: MyTheme().mainTextStyle,

@@ -9,7 +9,7 @@ class MyCard extends StatelessWidget {
     super.key,
     required this.child,
     this.margin,
-    this.padding,
+    this.padding = const EdgeInsets.all(8),
     this.width,
     this.height,
     this.alignment = Alignment.center,
@@ -25,7 +25,7 @@ class MyCard extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onSurface,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(width: 1, color: Colors.black12),
       ),
       child: child,

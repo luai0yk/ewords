@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.3.3
   google_nav_bar: ^5.0.7
   flutter_native_splash: ^2.4.4
+  hugeicons: ^0.0.7
   flutter:
     sdk: flutter
 

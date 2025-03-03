@@ -75,14 +75,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
               if (isQuizCompleted) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (ModalRoute.of(context)?.isCurrent ?? false) {
-                    provider.insertOrUpdateQuizScore(
-                      score: QuizScoreModel(
-                        id: widget.unit.id,
-                        unitId: widget.unit.unitId,
-                        bookId: widget.unit.bookId,
-                        correctAnswers: provider.correctCount,
-                      ),
-                    );
+                    //TODO: insert score when completed
 
                     DialogHelper.show(
                       context: context,
@@ -286,6 +279,14 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                               if (provider.selectedAnswer == choice &&
                                   !provider.isAnswered) {
                                 provider.checkAnswer(choice);
+                                provider.insertOrUpdateQuizScore(
+                                  score: QuizScoreModel(
+                                    id: widget.unit.id,
+                                    unitId: widget.unit.unitId,
+                                    bookId: widget.unit.bookId,
+                                    correctAnswers: provider.correctCount,
+                                  ),
+                                );
                               } else {
                                 TTS.instance.speak(choice);
                                 provider.setSelectedAnswer(choice);
