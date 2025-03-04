@@ -1,3 +1,4 @@
+import 'package:ewords/provider/diamonds_provider.dart';
 import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ void main() async {
             create: (context) => TabBarIconsVisibilityProvider()),
         ChangeNotifierProvider(create: (context) => QuizProvider()),
         ChangeNotifierProvider(create: (context) => UnitsProvider()),
+        ChangeNotifierProvider(create: (context) => DiamondsProvider()),
       ],
       child: const MyApp(), // Start the app with MyApp as the root widget
     ),

@@ -3,6 +3,7 @@ import 'package:ewords/services/telegram_share_service.dart';
 import 'package:ewords/services/whatsapp_share_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../theme/my_colors.dart';
@@ -40,6 +41,16 @@ class ShareUnitContentDialog extends StatelessWidget {
             crossAxisAlignment:
                 CrossAxisAlignment.stretch, // Stretch contents to fill
             children: [
+              // Container(
+              //   margin: EdgeInsets.symmetric(
+              //     horizontal: MediaQuery.of(context).size.width / 3,
+              //   ),
+              //   height: 5,
+              //   decoration: BoxDecoration(
+              //     color: Colors.black38,
+              //     borderRadius: BorderRadius.circular(20),
+              //   ),
+              // ),
               // Title of the share dialog
               Text(
                 'Share via..',
@@ -72,12 +83,24 @@ class ShareUnitContentDialog extends StatelessWidget {
                   }
                   Navigator.of(context).pop(); // Close the dialog
                 },
-                child: Text(
-                  'WhatsApp',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                      children: const [
+                        WidgetSpan(
+                          child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedWhatsapp,
+                              color: Colors.green),
+                        ),
+                        TextSpan(text: '   WhatsApp'),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -110,12 +133,24 @@ class ShareUnitContentDialog extends StatelessWidget {
                   }
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  'Telegram',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                      children: const [
+                        WidgetSpan(
+                          child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedTelegram,
+                              color: Colors.blue),
+                        ),
+                        TextSpan(text: '   Telegram'),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -133,12 +168,25 @@ class ShareUnitContentDialog extends StatelessWidget {
                   }
                   Navigator.of(context).pop(); // Close the dialog
                 },
-                child: Text(
-                  'Other App',
-                  style: TextStyle(
-                    color: MyColors.themeColors[300],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: MyColors.themeColors[300],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                      children: [
+                        WidgetSpan(
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedShare08,
+                            color: MyColors.themeColors[300]!,
+                          ),
+                        ),
+                        const TextSpan(text: '   Other Apps'),
+                      ],
+                    ),
                   ),
                 ),
               ),

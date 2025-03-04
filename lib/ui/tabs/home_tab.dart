@@ -11,6 +11,8 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../provider/diamonds_provider.dart';
+import '../../utils/constants.dart';
 import '../../utils/helpers/snackbar_helper.dart';
 import '../../utils/recent_unit.dart';
 import '../my_widgets/my_card.dart';
@@ -25,24 +27,27 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  SharedPreferences? prefs;
   int? currentActiveUnit;
+
   final ScrollController _scrollController = ScrollController();
 
   Future<void> init() async {
-    prefs = await SharedPreferences.getInstance();
-    currentActiveUnit = prefs!.getInt('current_active_unit') ?? 1;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    currentActiveUnit = prefs.getInt('current_active_unit') ?? 1;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     init();
+    context.read<DiamondsProvider>().loadDiamonds();
   }
 
   @override
   Widget build(BuildContext context) {
     MyTheme.initialize(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -55,14 +60,36 @@ class _HomeTabState extends State<HomeTab> {
               }
               return ListView.builder(
                 controller: _scrollController,
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.22,
+                padding: EdgeInsets.only(
+                  right: MediaQuery.of(context).size.width * 0.22,
+                  left: MediaQuery.of(context).size.width * 0.22,
+                  top: MediaQuery.of(context).size.width * 0.30,
+                  bottom: MediaQuery.of(context).size.width * 0.10,
                 ),
                 reverse: true,
                 itemCount: provider.units!.length,
                 itemBuilder: (context, index) {
-                  return _buildListItem(
-                      index, provider.units!, provider.scores ?? []);
+                  if (index == 0 || (index % 31 == 0)) {
+                    return MyCard(
+                      //  margin: EdgeInsets.only(bottom: 30.h),
+                      child: Text(
+                        MyConstants
+                            .bookDescription[provider.units![index].bookId - 1],
+                        style: MyTheme().secondaryTextStyle.copyWith(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    );
+                  } else {
+                    final itemIndex = index - ((index ~/ 31) + 1);
+
+                    return _buildListItem(
+                      itemIndex,
+                      provider.units ?? [],
+                      provider.scores ?? [],
+                    );
+                  }
                 },
               );
             },
@@ -74,7 +101,10 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _buildListItem(
-      int index, List<UnitModel> units, List<QuizScoreModel> scores) {
+    int index,
+    List<UnitModel> units,
+    List<QuizScoreModel> scores,
+  ) {
     Color? unPassedUnitColor = Theme.of(context).brightness == Brightness.light
         ? MyColors.themeColors[50]
         : MyColors.themeColors[50]!.withOpacity(0.1);
@@ -99,9 +129,11 @@ class _HomeTabState extends State<HomeTab> {
 
         return Container(
           alignment: alignment,
-          child: SizedBox(
-            width: 85.w,
-            height: 120.h,
+          child: Container(
+            width: 100.w,
+            // height: 120.h,
+            // color: Colors.red,
+            margin: EdgeInsets.symmetric(vertical: 30.h),
             child: Column(
               children: [
                 GestureDetector(
@@ -115,49 +147,41 @@ class _HomeTabState extends State<HomeTab> {
                           settings: RouteSettings(arguments: unit),
                         ),
                       );
+                    } else {
+                      SnackBarHelper.show(
+                        context: context,
+                        widget:
+                            MySnackBar.create(content: 'This unit is locked'),
+                      );
                     }
                   },
-                  child: Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Container(
-                        height: 85.r,
-                        width: 85.r,
-                        margin: const EdgeInsets.only(bottom: 5),
-                        decoration: isPassed || currentActiveUnit == unit.id
-                            ? BoxDecoration(
-                                color: MyColors.themeColors[300],
-                                borderRadius: BorderRadius.circular(90),
-                                border: Border.all(
-                                  color: currentActiveUnit == unit.id
-                                      ? MyColors.themeColors[50]!
-                                          .withOpacity(.7)
-                                      : Theme.of(context).colorScheme.onSurface,
-                                  width: 5,
-                                ),
-                              )
-                            : BoxDecoration(
-                                color: unPassedUnitColor,
-                                borderRadius: BorderRadius.circular(90),
-                                border: Border.all(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  width: 5,
-                                ),
-                              ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${index + 1}',
-                          style: TextStyle(
-                            color: isPassed || currentActiveUnit == unit.id
-                                ? Colors.white
-                                : MyColors.themeColors[300],
-                            fontSize: 35.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  child: Container(
+                    height: currentActiveUnit == unit.id ? 85.r : 72.r,
+                    width: currentActiveUnit == unit.id ? 85.r : 72.r,
+                    margin: const EdgeInsets.only(bottom: 5),
+                    decoration: BoxDecoration(
+                      color: isPassed || currentActiveUnit == unit.id
+                          ? MyColors.themeColors[300]
+                          : unPassedUnitColor,
+                      borderRadius: BorderRadius.circular(90),
+                      border: currentActiveUnit == unit.id
+                          ? Border.all(
+                              color: MyColors.themeColors[50]!.withOpacity(.7),
+                              width: 5,
+                            )
+                          : const Border(),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${index + 1}',
+                      style: TextStyle(
+                        color: isPassed || currentActiveUnit == unit.id
+                            ? Colors.white
+                            : MyColors.themeColors[300],
+                        fontSize: 35.sp,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
                   ),
                 ),
                 if (isPassed && score != null)
@@ -195,11 +219,16 @@ class _HomeTabState extends State<HomeTab> {
                     color: MyColors.themeColors[300]!,
                   ),
                   const SizedBox(width: 2),
-                  Text(
-                    '${prefs!.getInt('diamond') ?? 5}',
-                    style: MyTheme().mainTextStyle.copyWith(
-                          color: MyColors.themeColors[300],
-                        ),
+                  Selector<DiamondsProvider, int>(
+                    builder: (context, diamonds, child) {
+                      return Text(
+                        '$diamonds',
+                        style: MyTheme().mainTextStyle.copyWith(
+                              color: MyColors.themeColors[300],
+                            ),
+                      );
+                    },
+                    selector: (ctx, provider) => provider.diamonds,
                   ),
                 ],
               ),

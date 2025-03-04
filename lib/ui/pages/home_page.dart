@@ -7,7 +7,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/word_model.dart';
 import '../../provider/gnav_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
@@ -16,8 +15,7 @@ import '../tabs/scores_tab.dart';
 import '../tabs/settings_tab.dart';
 
 // Global variables to hold word list and pages
-List<WordModel>? wordList;
-List<Widget>? pages;
+//List<WordModel>? wordList;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   final ScrollController scrollController =
       ScrollController(); // Controller for scrolling
   SharedPreferences? prefs; // Instance of SharedPreferences
+  List<Widget>? pages;
 
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _HomePageState extends State<HomePage> {
     pages = [
       // BookListPage(scrollController: scrollController),
       const HomeTab(),
-      FavoriteListPage(scrollController: scrollController),
+      FavoriteTab(scrollController: scrollController),
       ScoresTab(scrollController: scrollController),
       const SettingsPage(),
     ];

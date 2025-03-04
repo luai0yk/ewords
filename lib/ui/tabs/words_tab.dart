@@ -123,10 +123,7 @@ class _WordsTabState extends State<WordsTab> {
             ),
           ],
           isTrailingVisible: true,
-          leadingText: word.word,
-          title: word.word,
-          text: word.definition,
-          subText: word.example,
+          word: word,
         );
       },
     );

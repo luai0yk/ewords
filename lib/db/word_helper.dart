@@ -14,7 +14,6 @@ class WordHelper extends DBHelper {
   //To prevent the instantiation of the WordsHelper class
   WordHelper._intern();
 
-  /*Getting words from database (words.db) depending the query*/
   Future<List<WordModel>> getWords({int unitId = -1, int bookId = -1}) async {
     /*Initializing database variable with the db function defined above*/
     var db = await database;

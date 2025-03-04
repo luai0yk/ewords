@@ -2,9 +2,11 @@ import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/utils/tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/quiz_score_model.dart';
+import '../../provider/diamonds_provider.dart';
 import '../../provider/quiz_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
@@ -75,7 +77,18 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
               if (isQuizCompleted) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (ModalRoute.of(context)?.isCurrent ?? false) {
-                    //TODO: insert score when completed
+                    provider.insertOrUpdateQuizScore(
+                      score: QuizScoreModel(
+                        id: widget.unit.id,
+                        unitId: widget.unit.unitId,
+                        bookId: widget.unit.bookId,
+                        correctAnswers: provider.correctCount,
+                      ),
+                    );
+
+                    context.read<DiamondsProvider>().updateDiamonds(
+                          correctAnswers: provider.correctCount,
+                        );
 
                     DialogHelper.show(
                       context: context,
@@ -194,15 +207,16 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                               pageBuilder:
                                   (context, animation, secondaryAnimation) {
                                 return PauseResumeDialog(
-                                    tabController: widget.tabController);
+                                  tabController: widget.tabController,
+                                );
                               },
                             );
                           },
-                          icon: Icon(
-                            color: MyColors.themeColors[300],
-                            _quizProvider!.isPaused
-                                ? Icons.play_arrow_rounded
-                                : Icons.pause_rounded,
+                          icon: HugeIcon(
+                            icon: _quizProvider!.isPaused
+                                ? HugeIcons.strokeRoundedPlay
+                                : HugeIcons.strokeRoundedPause,
+                            color: MyColors.themeColors[300]!,
                           ),
                         ),
                       ],
@@ -254,11 +268,10 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Icon(
-                                  Icons.arrow_forward_rounded,
+                                const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedArrowRight04,
                                   color: Colors.white,
-                                  size: 24.sp,
-                                ),
+                                )
                               ],
                             );
                           }
@@ -279,14 +292,6 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                               if (provider.selectedAnswer == choice &&
                                   !provider.isAnswered) {
                                 provider.checkAnswer(choice);
-                                provider.insertOrUpdateQuizScore(
-                                  score: QuizScoreModel(
-                                    id: widget.unit.id,
-                                    unitId: widget.unit.unitId,
-                                    bookId: widget.unit.bookId,
-                                    correctAnswers: provider.correctCount,
-                                  ),
-                                );
                               } else {
                                 TTS.instance.speak(choice);
                                 provider.setSelectedAnswer(choice);

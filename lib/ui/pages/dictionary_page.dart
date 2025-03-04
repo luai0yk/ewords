@@ -49,7 +49,6 @@ class _DictionaryPageState extends State<DictionaryPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // SliverAppBar for the header with a search field
           SliverAppBar(
             expandedHeight: 90.sp,
             collapsedHeight: 110.sp,
@@ -142,14 +141,8 @@ class _DictionaryPageState extends State<DictionaryPage> {
                                 onTap: () {
                                   // Define what happens when a list item is tapped
                                 },
-                                leadingText: provider.wordList[index]
-                                    .word, // Word as leading text
-                                title: provider
-                                    .wordList[index].word, // Title with word
-                                text: provider.wordList[index]
-                                    .definition, // Definition of the word
-                                subText: provider
-                                    .wordList[index].example, // Example usage
+                                word: provider.wordList[index],
+                                isWordDetailVisible: true,
                               ),
                             );
                           },
