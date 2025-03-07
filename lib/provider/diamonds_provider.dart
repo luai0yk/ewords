@@ -27,4 +27,13 @@ class DiamondsProvider with ChangeNotifier {
     await prefs.setInt('diamond', _diamonds);
     notifyListeners();
   }
+
+  Future<void> adRewardDiamonds({required int diamonds}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    _diamonds = (_diamonds + diamonds);
+
+    await prefs.setInt('diamond', _diamonds);
+    notifyListeners();
+  }
 }

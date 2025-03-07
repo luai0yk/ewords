@@ -5,8 +5,11 @@ import 'package:ewords/provider/units_provider.dart';
 import 'package:ewords/theme/my_colors.dart';
 import 'package:ewords/theme/my_theme.dart';
 import 'package:ewords/ui/pages/unit_content_page.dart';
+import 'package:ewords/utils/helpers/dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hidable/hidable.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +18,7 @@ import '../../provider/diamonds_provider.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers/snackbar_helper.dart';
 import '../../utils/recent_unit.dart';
+import '../dialogs/app_dialog.dart';
 import '../my_widgets/my_card.dart';
 import '../my_widgets/my_snackbar.dart';
 import '../pages/dictionary_page.dart';
@@ -29,6 +33,11 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   int? currentActiveUnit;
 
+  late RewardedAd _rewardedAd;
+  bool _isAdLoaded = false;
+
+  DiamondsProvider? _diamondsProvider;
+
   final ScrollController _scrollController = ScrollController();
 
   Future<void> init() async {
@@ -38,10 +47,67 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadRewardedAd();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     init();
-    context.read<DiamondsProvider>().loadDiamonds();
+    _diamondsProvider = context.read<DiamondsProvider>();
+    _diamondsProvider!.loadDiamonds();
+  }
+
+  @override
+  void dispose() {
+    // _rewardedAd.dispose();
+    super.dispose();
+  }
+
+  void _loadRewardedAd() {
+    RewardedAd.load(
+      adUnitId: 'ca-app-pub-3940256099942544/5224354917', // Use test ad unit ID
+      request: const AdRequest(),
+
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (RewardedAd ad) {
+          _rewardedAd = ad;
+          _isAdLoaded = true;
+
+          SnackBarHelper.show(
+            context: context,
+            widget: MySnackBar.create(
+              content: 'You have a chance to get a reward',
+              label: 'Claim',
+              onPressed: () {
+                _showRewardedAd();
+              },
+            ),
+          );
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _isAdLoaded = false;
+        },
+      ),
+    );
+  }
+
+  void _showRewardedAd() {
+    if (_isAdLoaded) {
+      _rewardedAd.show(
+        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+          _diamondsProvider!.adRewardDiamonds(diamonds: 5);
+        },
+      );
+      _loadRewardedAd(); // Load another ad
+    } else {
+      SnackBarHelper.show(
+        context: context,
+        widget: MySnackBar.create(content: 'Ad is not loaded!'),
+      );
+    }
   }
 
   @override
@@ -94,7 +160,12 @@ class _HomeTabState extends State<HomeTab> {
               );
             },
           ),
-          _buildFloatingButtons(),
+          Hidable(
+            controller: _scrollController,
+            preferredWidgetSize: Size.fromHeight(60.h),
+            deltaFactor: 0.06,
+            child: _buildFloatingButtons(),
+          ),
         ],
       ),
     );
@@ -118,14 +189,16 @@ class _HomeTabState extends State<HomeTab> {
           unitId: unit.unitId,
         );
 
-    return Consumer<QuizProvider>(
-      builder: (context, provider, child) {
-        bool isPassed = provider.isPassed(unit.id);
+    return Selector<QuizProvider, bool>(
+      builder: (context, isPassed, child) {
+        // bool isPassed = provider.isPassed(unit.id);
         QuizScoreModel? score;
-
+        //
         if (isPassed && index < scores.length) {
           score = scores[index];
         }
+
+        print('built list items');
 
         return Container(
           alignment: alignment,
@@ -191,6 +264,41 @@ class _HomeTabState extends State<HomeTab> {
           ),
         );
       },
+      selector: (p0, provider) {
+        return provider.isPassed(unit.id);
+      },
+    );
+  }
+
+  Widget _buildUnitStars({required double score}) {
+    print('built stars');
+    Color? firstStarColor, secondStarColor, thirdStarColor;
+
+    firstStarColor =
+        score >= 50 ? MyColors.themeColors[300] : MyColors.themeColors[50];
+    secondStarColor =
+        score >= 75 ? MyColors.themeColors[300] : MyColors.themeColors[50];
+    thirdStarColor =
+        score >= 90 ? MyColors.themeColors[300] : MyColors.themeColors[50];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        HugeIcon(
+          icon: HugeIcons.strokeRoundedStar,
+          color: firstStarColor!,
+        ),
+        const SizedBox(width: 3),
+        HugeIcon(
+          icon: HugeIcons.strokeRoundedStar,
+          color: secondStarColor!,
+        ),
+        const SizedBox(width: 3),
+        HugeIcon(
+          icon: HugeIcons.strokeRoundedStar,
+          color: thirdStarColor!,
+        ),
+      ],
     );
   }
 
@@ -210,7 +318,22 @@ class _HomeTabState extends State<HomeTab> {
           children: [
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {},
+              onPressed: () {
+                DialogHelper.show(
+                  context: context,
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return AppDialog(
+                      title: 'Rewarded Ad',
+                      content: 'Watch an ad and get 5 diamonds.',
+                      okayText: 'Watch Ad',
+                      onOkay: () {
+                        _showRewardedAd();
+                      },
+                      onCancel: () => null,
+                    );
+                  },
+                );
+              },
               tooltip: 'Diamonds',
               icon: Row(
                 children: [
@@ -294,37 +417,6 @@ class _HomeTabState extends State<HomeTab> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildUnitStars({required double score}) {
-    Color? firstStarColor, secondStarColor, thirdStarColor;
-
-    firstStarColor =
-        score >= 50 ? MyColors.themeColors[300] : MyColors.themeColors[50];
-    secondStarColor =
-        score >= 75 ? MyColors.themeColors[300] : MyColors.themeColors[50];
-    thirdStarColor =
-        score >= 90 ? MyColors.themeColors[300] : MyColors.themeColors[50];
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedStar,
-          color: firstStarColor!,
-        ),
-        const SizedBox(width: 3),
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedStar,
-          color: secondStarColor!,
-        ),
-        const SizedBox(width: 3),
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedStar,
-          color: thirdStarColor!,
-        ),
-      ],
     );
   }
 

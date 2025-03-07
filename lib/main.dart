@@ -4,6 +4,7 @@ import 'package:ewords/provider/units_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/favorite_words_provider.dart';
@@ -17,6 +18,8 @@ import 'ui/pages/home_page.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  MobileAds.instance.initialize();
 
   FlutterNativeSplash.preserve(
     widgetsBinding: widgetsBinding,

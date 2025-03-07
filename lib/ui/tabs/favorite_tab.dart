@@ -130,6 +130,9 @@ class _FavoriteTabState extends State<FavoriteTab> {
                                     .play(currentPlayingWordID: favorite.id);
                               }
                             },
+                            tooltip: currentPlayingWordID == favorite.id
+                                ? 'Stop'
+                                : 'Speak',
                             icon: HugeIcon(
                               icon: currentPlayingWordID == favorite.id
                                   ? HugeIcons.strokeRoundedStop

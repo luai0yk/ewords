@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 class MySnackBar {
-  static SnackBar create({required content}) {
+  static SnackBar create({required content, label, Function()? onPressed}) {
     return SnackBar(
       content: Text(content),
+      action: SnackBarAction(
+        label: label,
+        onPressed: onPressed!,
+      ),
       margin: const EdgeInsets.all(10),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(

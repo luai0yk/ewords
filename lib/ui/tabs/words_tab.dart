@@ -78,6 +78,7 @@ class _WordsTabState extends State<WordsTab> {
                       ttsProvider!.play(currentPlayingWordID: word.id);
                     }
                   },
+                  tooltip: currentPlayingWordID == word.id ? 'Stop' : 'Speak',
                   icon: HugeIcon(
                     icon: currentPlayingWordID == word.id
                         ? HugeIcons.strokeRoundedStop
@@ -111,6 +112,8 @@ class _WordsTabState extends State<WordsTab> {
                         .read<FavoriteWordsProvider>()
                         .checkFavorites(word.id);
                   },
+                  tooltip:
+                      isFavorite ? 'Remove from favorites' : 'Add to favorites',
                   icon: HugeIcon(
                     icon: isFavorite
                         ? HugeIcons.strokeRoundedHeartCheck

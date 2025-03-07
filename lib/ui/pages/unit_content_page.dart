@@ -36,9 +36,11 @@ class _UnitContentPageState extends State<UnitContentPage>
 
   UnitModel? unit;
 
-  FlutterTts? flutterTts;
+  FlutterTts? _flutterTts;
 
-  TTSProvider? ttsProvider; // Store reference to TTSProvider
+  TabBarIconsVisibilityProvider? _tabBarIconsVisibilityProvider;
+
+  TTSProvider? _ttsProvider; // Store reference to TTSProvider
 
   @override
   void initState() {
@@ -49,31 +51,30 @@ class _UnitContentPageState extends State<UnitContentPage>
     tabController = TabController(length: 3, vsync: this);
 
     /*Initialization for FlutterTts*/
-    flutterTts = TTS.instance;
+    _flutterTts = TTS.instance;
 
     /*Listen to TabBar changes in our case when it changes FlutterTts stops*/
     tabController!.addListener(() {
       //Stop playing TTS whenever the tab changes
-      ttsProvider!.stop();
-      flutterTts!.stop();
+      _ttsProvider!.stop();
+      _flutterTts!.stop();
 
       //Hide the share and speak icons if the current tab is QuizTab
-      Provider.of<TabBarIconsVisibilityProvider>(context, listen: false)
-          .showHideTabBarIcons(tabController!.index);
+      _tabBarIconsVisibilityProvider!.showHideTabBarIcons(tabController!.index);
     });
 
-    flutterTts!.setProgressHandler(
+    _flutterTts!.setProgressHandler(
       (text, start, end, word) {
         if (tabController!.index == 1) {
-          ttsProvider!.updateCurrentWordStartEnd(start, end);
+          _ttsProvider!.updateCurrentWordStartEnd(start, end);
         }
       },
     );
 
-    flutterTts!.setCompletionHandler(
+    _flutterTts!.setCompletionHandler(
       () {
-        flutterTts!.stop();
-        ttsProvider!.stop();
+        _flutterTts!.stop();
+        _ttsProvider!.stop();
       },
     );
   }
@@ -84,14 +85,18 @@ class _UnitContentPageState extends State<UnitContentPage>
 
     /*The speech rate or speed
     * its value comes from the settings page (Slider's value)*/
-    flutterTts!.setSpeechRate(context.read<SettingsProvider>().speechRate!);
+    _flutterTts!.setSpeechRate(context.read<SettingsProvider>().speechRate!);
 
     // Store the reference to avoid accessing context in dispose()
-    ttsProvider = context.read<TTSProvider>();
+    _ttsProvider = context.read<TTSProvider>();
+
+    _tabBarIconsVisibilityProvider =
+        context.read<TabBarIconsVisibilityProvider>();
 
     /*The speech language or accent
     * its value comes from the settings page (Accent's ListTile>>RadioListTile)*/
-    flutterTts!.setLanguage(context.read<SettingsProvider>().speechAccentCode!);
+    _flutterTts!
+        .setLanguage(context.read<SettingsProvider>().speechAccentCode!);
 
     /*Initialization for FlutterTts which handle text to speak*/
     /*Save key data once the page is opened*/
@@ -103,8 +108,12 @@ class _UnitContentPageState extends State<UnitContentPage>
 
   @override
   void dispose() {
-    flutterTts!.stop();
-    ttsProvider!.stop(listen: false);
+    _flutterTts!.stop();
+
+    _ttsProvider!.stop(listen: false);
+
+    //make the tab number 0 to show the icons when the page is opened again
+    _tabBarIconsVisibilityProvider!.tabNumber = 0;
     super.dispose();
   }
 
@@ -158,24 +167,24 @@ class _UnitContentPageState extends State<UnitContentPage>
                             return IconButton(
                               onPressed: () async {
                                 if (isPlaying) {
-                                  flutterTts!.stop();
-                                  ttsProvider!.stop();
+                                  _flutterTts!.stop();
+                                  _ttsProvider!.stop();
                                 } else {
                                   if (tabController!.index == 0) {
-                                    flutterTts!.speak(
+                                    _flutterTts!.speak(
                                       await CombineUnitWords.getCombinedWords(
                                         unit!.words,
                                       ),
                                     );
                                   } else if (tabController!.index == 1) {
-                                    flutterTts!.speak(unit!.passage);
+                                    _flutterTts!.speak(unit!.passage);
                                   }
-                                  ttsProvider!.play();
+                                  _ttsProvider!.play();
                                 }
                               },
                               tooltip: isPlaying ? 'Stop' : 'Speak',
                               icon: isPlaying &&
-                                      ttsProvider!.currentPlayingWordID == -1
+                                      _ttsProvider!.currentPlayingWordID == -1
                                   ? HugeIcon(
                                       icon: HugeIcons.strokeRoundedStop,
                                       color: MyColors.themeColors[300]!,
