@@ -13,21 +13,23 @@ class MyConstants {
 
   static List<UnitModel>? units;
 
-  static List<String> bookDescription = [
-    'A1 - Beginner: Understand and use basic phrases for immediate needs.',
-    'A2 - Elementary: Communicate in simple tasks and routine matters.',
-    'B1 - Intermediate: Handle familiar topics and situations effectively.',
-    'B2 - Upper-Intermediate: Comprehend complex texts and interact fluently.',
-    'C1 - Advanced: Use language flexibly in social, academic, and professional contexts.',
-    'C2 - Proficient: Understand virtually everything and express ideas effortlessly.',
+  static List<String> levelDescription = [
+    'Learn and recognize basic words for everyday situations.',
+    'Acquire vocabulary for simple tasks and routine matters.',
+    'Expand word knowledge to handle familiar topics effectively.',
+    'Broaden vocabulary to comprehend complex texts and engage fluently.',
+    'Master a wide range of words for flexible use in various contexts.',
+    'Attain an extensive vocabulary to express ideas effortlessly.',
   ];
 
-  static List<String> levels = [
-    'A1 - Beginner',
-    'A2 - Elementary',
-    'B1 - Intermediate',
-    'B2 - Upper-Intermediate',
-    'C1 - Advanced',
-    'C2 - Proficient'
+  static List<String> levelNames = [
+    'Beginner',
+    'Elementary',
+    'Intermediate',
+    'Upper-Intermediate',
+    'Advanced',
+    'Proficient'
   ];
+
+  static List<String> levelCodes = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 }

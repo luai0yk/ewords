@@ -5,15 +5,15 @@ import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 
 class AppDialog extends StatelessWidget {
-  final String title, content;
+  final String? title, content;
   final Function()? onOkay, onCancel, onOther;
   final String? okayText, cancelText, otherText;
   final Widget? customContent;
 
   const AppDialog({
     super.key,
-    required this.title,
-    required this.content,
+    this.title,
+    this.content,
     this.onOkay,
     this.onCancel,
     this.onOther,
@@ -26,17 +26,21 @@ class AppDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        title,
-        style: MyTheme().mainTextStyle.copyWith(
-              fontSize: 18.sp,
-            ),
-      ),
+      title: title != null
+          ? Text(
+              title!,
+              style: MyTheme().mainTextStyle.copyWith(
+                    fontSize: 18.sp,
+                  ),
+            )
+          : null,
       content: customContent ??
-          Text(
-            content,
-            style: MyTheme().mainTextStyle.copyWith(fontSize: 14.sp),
-          ),
+          (content != null
+              ? Text(
+                  content!,
+                  style: MyTheme().mainTextStyle.copyWith(fontSize: 14.sp),
+                )
+              : null),
       actions: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -10,9 +10,8 @@ import '../models/quiz_score_model.dart';
 import '../models/word_model.dart';
 
 class QuizProvider extends ChangeNotifier {
-  QuizProvider();
-
   double _progress = 0.0;
+  int _currentActiveUnit = 0;
   final int duration = 30;
   int _questionNumber = 0;
   Timer? _timer;
@@ -37,6 +36,11 @@ class QuizProvider extends ChangeNotifier {
   int get correctCount => _correctCount;
   int get wrongCount => _wrongCount;
 
+  void init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _currentActiveUnit = prefs.getInt('current_active_unit') ?? 1;
+  }
+
   set setProgress(double val) => _progress = val;
 
   void setSelectedAnswer(String val) {
@@ -45,18 +49,12 @@ class QuizProvider extends ChangeNotifier {
   }
 
   void loadWords(UnitModel unit) async {
-    // List<WordModel> words = await WordHelper.instance.getWords(
-    //   bookId: passageArgs.bookId!,
-    //   unitId: passageArgs.unitId!,
-    // );
-
     if (unit.words.isNotEmpty) {
       _listWords = unit.words;
       _questionNumber = 0;
       _wrongCount = 0;
       _correctCount = 0;
       _updateChoices();
-      //notifyListeners();
     }
   }
 
@@ -99,7 +97,6 @@ class QuizProvider extends ChangeNotifier {
     _isAnswered = false;
     isPaused = false;
     _startProgress();
-    //notifyListeners();
   }
 
   void checkAnswer(String selectedAnswer) {
@@ -127,7 +124,7 @@ class QuizProvider extends ChangeNotifier {
       _updateChoices();
     } else {
       isQuizCompleted.value = true;
-      _timer!.cancel();
+      _timer?.cancel();
     }
     notifyListeners();
   }
@@ -155,7 +152,10 @@ class QuizProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (score.totalScore >= 50) {
-      await prefs.setInt('current_active_unit', (score.id + 1));
+      await prefs.setInt(
+        'current_active_unit',
+        (score.id <= 179 ? score.id + 1 : 1),
+      );
     }
 
     checkPassedUnits(
@@ -177,7 +177,7 @@ class QuizProvider extends ChangeNotifier {
 
     if (isPassed) {
       _passedUnitIds.add(id);
-      _passedUnitIds.add(id + 1);
+      _passedUnitIds.add(id <= 179 ? (id + 1) : 0);
     } else {
       _passedUnitIds.remove(id);
     }
@@ -185,8 +185,12 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Check if a unit ID is in the passed units
-  bool isPassed(int id) => _passedUnitIds.contains(id);
+  Map<String, dynamic> getUnitStatus(int id) {
+    return <String, dynamic>{
+      'is_passed': _passedUnitIds.contains(id),
+      'current_active_unit': _currentActiveUnit,
+    };
+  }
 
   @override
   void dispose() {

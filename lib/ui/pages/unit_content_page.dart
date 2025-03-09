@@ -12,6 +12,7 @@ import '../../provider/tabbar_icons_visibility_provider.dart';
 import '../../provider/tts_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../../utils/ads/banner_ad.dart';
 import '../../utils/combine_unit_words.dart';
 import '../../utils/helpers/bottom_sheet_helper.dart';
 import '../../utils/recent_unit.dart';
@@ -47,7 +48,7 @@ class _UnitContentPageState extends State<UnitContentPage>
     super.initState();
 
     /*Initialization for TabController that handles
-    the count of tabs and the animation of then*/
+    the count of tabs and the animation of them*/
     tabController = TabController(length: 3, vsync: this);
 
     /*Initialization for FlutterTts*/
@@ -232,21 +233,28 @@ class _UnitContentPageState extends State<UnitContentPage>
           titleTextStyle: MyTheme().appBarTitleStyle,
         ),
       ),
-      body: TabBarView(
-        dragStartBehavior: DragStartBehavior.start,
-        controller: tabController,
+      body: Column(
         children: [
-          WordsTab(
-            unit: unit!,
-            scrollController: scrollController,
+          Expanded(
+            child: TabBarView(
+              dragStartBehavior: DragStartBehavior.start,
+              controller: tabController,
+              children: [
+                WordsTab(
+                  unit: unit!,
+                  scrollController: scrollController,
+                ),
+                PassageTab(
+                    passage: unit!.passage, scrollController: scrollController),
+                QuizTab(
+                  unit: unit!,
+                  tabController: tabController!,
+                ),
+                //TimerProgressBar(),
+              ],
+            ),
           ),
-          PassageTab(
-              passage: unit!.passage, scrollController: scrollController),
-          QuizTab(
-            unit: unit!,
-            tabController: tabController!,
-          ),
-          //TimerProgressBar(),
+          const AdBanner(), // Add AdBanner widget here
         ],
       ),
     );

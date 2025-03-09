@@ -6,7 +6,10 @@ import 'package:provider/provider.dart';
 import '../../provider/dictionary_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../../utils/helpers/dialog_helper.dart';
+import '../dialogs/app_dialog.dart';
 import '../my_widgets/my_list_tile.dart';
+import '../my_widgets/word_detail.dart';
 
 class DictionaryPage extends StatefulWidget {
   const DictionaryPage({super.key});
@@ -139,7 +142,19 @@ class _DictionaryPageState extends State<DictionaryPage> {
                                   EdgeInsets.only(left: 10.sp, right: 10.sp),
                               child: MyListTile(
                                 onTap: () {
-                                  // Define what happens when a list item is tapped
+                                  DialogHelper.show(
+                                    context: context,
+                                    pageBuilder: (context, animation,
+                                        secondaryAnimation) {
+                                      return AppDialog(
+                                        customContent: WordDetail(
+                                          word: provider.wordList[index],
+                                        ),
+                                        cancelText: 'Hide',
+                                        onCancel: () => null,
+                                      );
+                                    },
+                                  );
                                 },
                                 word: provider.wordList[index],
                                 isWordDetailVisible: true,

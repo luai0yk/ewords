@@ -11,7 +11,10 @@ import '../../models/word_model.dart';
 import '../../provider/favorite_words_provider.dart';
 import '../../provider/tts_provider.dart';
 import '../../theme/my_colors.dart';
+import '../../utils/helpers/dialog_helper.dart';
+import '../dialogs/app_dialog.dart';
 import '../my_widgets/my_list_tile.dart';
+import '../my_widgets/word_detail.dart';
 
 //BuildContext? myContext;
 
@@ -61,7 +64,20 @@ class _WordsTabState extends State<WordsTab> {
         context.read<FavoriteWordsProvider>().checkFavorites(word.id);
 
         return MyListTile(
-          onTap: () {},
+          onTap: () {
+            DialogHelper.show(
+              context: context,
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return AppDialog(
+                  customContent: WordDetail(
+                    word: word,
+                  ),
+                  cancelText: 'Hide',
+                  onCancel: () => null,
+                );
+              },
+            );
+          },
           trailing: [
             Selector<TTSProvider, int>(
               selector: (context, provider) => provider.currentPlayingWordID,

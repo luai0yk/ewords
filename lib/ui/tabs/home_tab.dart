@@ -5,23 +5,19 @@ import 'package:ewords/provider/units_provider.dart';
 import 'package:ewords/theme/my_colors.dart';
 import 'package:ewords/theme/my_theme.dart';
 import 'package:ewords/ui/pages/unit_content_page.dart';
-import 'package:ewords/utils/helpers/dialog_helper.dart';
+import 'package:ewords/utils/ads/reward_ad.dart';
+import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hidable/hidable.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../provider/diamonds_provider.dart';
-import '../../utils/constants.dart';
 import '../../utils/helpers/snackbar_helper.dart';
-import '../../utils/recent_unit.dart';
-import '../dialogs/app_dialog.dart';
+import '../my_widgets/floating_appbar.dart';
 import '../my_widgets/my_card.dart';
 import '../my_widgets/my_snackbar.dart';
-import '../pages/dictionary_page.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -31,83 +27,34 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  int? currentActiveUnit;
-
-  late RewardedAd _rewardedAd;
-  bool _isAdLoaded = false;
+  late RewardAd _rewardAd;
 
   DiamondsProvider? _diamondsProvider;
+  QuizProvider? _quizProvider;
 
   final ScrollController _scrollController = ScrollController();
-
-  Future<void> init() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    currentActiveUnit = prefs.getInt('current_active_unit') ?? 1;
-  }
 
   @override
   void initState() {
     super.initState();
-    _loadRewardedAd();
+
+    _rewardAd = RewardAd(
+      context: context,
+      onRewardEarned: () {
+        _diamondsProvider!.adRewardDiamonds(diamonds: 5);
+      },
+    );
+
+    _rewardAd.loadRewardedAd();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    init();
     _diamondsProvider = context.read<DiamondsProvider>();
+    _quizProvider = context.read<QuizProvider>();
+    _quizProvider!.init();
     _diamondsProvider!.loadDiamonds();
-  }
-
-  @override
-  void dispose() {
-    // _rewardedAd.dispose();
-    super.dispose();
-  }
-
-  void _loadRewardedAd() {
-    RewardedAd.load(
-      adUnitId: 'ca-app-pub-3940256099942544/5224354917', // Use test ad unit ID
-      request: const AdRequest(),
-
-      rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdLoaded: (RewardedAd ad) {
-          _rewardedAd = ad;
-          _isAdLoaded = true;
-
-          SnackBarHelper.show(
-            context: context,
-            widget: MySnackBar.create(
-              content: 'You have a chance to get a reward',
-              label: 'Claim',
-              onPressed: () {
-                _showRewardedAd();
-              },
-            ),
-          );
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          _isAdLoaded = false;
-        },
-      ),
-    );
-  }
-
-  void _showRewardedAd() {
-    if (_isAdLoaded) {
-      _rewardedAd.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-          _diamondsProvider!.adRewardDiamonds(diamonds: 5);
-        },
-      );
-      _loadRewardedAd(); // Load another ad
-    } else {
-      SnackBarHelper.show(
-        context: context,
-        widget: MySnackBar.create(content: 'Ad is not loaded!'),
-      );
-    }
   }
 
   @override
@@ -137,14 +84,37 @@ class _HomeTabState extends State<HomeTab> {
                 itemBuilder: (context, index) {
                   if (index == 0 || (index % 31 == 0)) {
                     return MyCard(
-                      //  margin: EdgeInsets.only(bottom: 30.h),
-                      child: Text(
-                        MyConstants
-                            .bookDescription[provider.units![index].bookId - 1],
-                        style: MyTheme().secondaryTextStyle.copyWith(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
+                      child: RichText(
+                        text: TextSpan(
+                          style: MyTheme().secondaryTextStyle.copyWith(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                          children: [
+                            WidgetSpan(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: MyColors.themeColors[50],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  MyConstants.levelCodes[
+                                      provider.units![index].bookId - 1],
+                                  style: TextStyle(
+                                    color: MyColors.themeColors[300],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
+                            TextSpan(
+                              text:
+                                  '  ${MyConstants.levelDescription[provider.units![index].bookId - 1]}',
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   } else {
@@ -164,7 +134,11 @@ class _HomeTabState extends State<HomeTab> {
             controller: _scrollController,
             preferredWidgetSize: Size.fromHeight(60.h),
             deltaFactor: 0.06,
-            child: _buildFloatingButtons(),
+            child: FloatingAppBar(
+              showRewardedAd: () {
+                _rewardAd.showRewardedAd();
+              },
+            ),
           ),
         ],
       ),
@@ -172,10 +146,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _buildListItem(
-    int index,
-    List<UnitModel> units,
-    List<QuizScoreModel> scores,
-  ) {
+      int index, List<UnitModel> units, List<QuizScoreModel> scores) {
     Color? unPassedUnitColor = Theme.of(context).brightness == Brightness.light
         ? MyColors.themeColors[50]
         : MyColors.themeColors[50]!.withOpacity(0.1);
@@ -189,16 +160,15 @@ class _HomeTabState extends State<HomeTab> {
           unitId: unit.unitId,
         );
 
-    return Selector<QuizProvider, bool>(
-      builder: (context, isPassed, child) {
-        // bool isPassed = provider.isPassed(unit.id);
+    return Selector<QuizProvider, Map<String, dynamic>>(
+      builder: (context, passedUnits, child) {
+        bool isPassed = passedUnits['is_passed'];
+        int currentActiveUnit = passedUnits['current_active_unit'];
         QuizScoreModel? score;
         //
         if (isPassed && index < scores.length) {
           score = scores[index];
         }
-
-        print('built list items');
 
         return Container(
           alignment: alignment,
@@ -219,6 +189,10 @@ class _HomeTabState extends State<HomeTab> {
                           builder: (context) => const UnitContentPage(),
                           settings: RouteSettings(arguments: unit),
                         ),
+                      ).then(
+                        (value) {
+                          _quizProvider!.init();
+                        },
                       );
                     } else {
                       SnackBarHelper.show(
@@ -264,14 +238,13 @@ class _HomeTabState extends State<HomeTab> {
           ),
         );
       },
-      selector: (p0, provider) {
-        return provider.isPassed(unit.id);
+      selector: (context, selector) {
+        return selector.getUnitStatus(unit.id);
       },
     );
   }
 
   Widget _buildUnitStars({required double score}) {
-    print('built stars');
     Color? firstStarColor, secondStarColor, thirdStarColor;
 
     firstStarColor =
@@ -299,124 +272,6 @@ class _HomeTabState extends State<HomeTab> {
           color: thirdStarColor!,
         ),
       ],
-    );
-  }
-
-  Widget _buildFloatingButtons() {
-    return MyCard(
-      margin: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 5,
-        left: MediaQuery.of(context).padding.top / 2,
-        right: MediaQuery.of(context).padding.top / 2,
-      ),
-      padding: EdgeInsets.all(4.sp),
-      width: double.infinity,
-      height: 35.h,
-      child: SizedBox(
-        width: double.infinity,
-        child: Row(
-          children: [
-            IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                DialogHelper.show(
-                  context: context,
-                  pageBuilder: (context, animation, secondaryAnimation) {
-                    return AppDialog(
-                      title: 'Rewarded Ad',
-                      content: 'Watch an ad and get 5 diamonds.',
-                      okayText: 'Watch Ad',
-                      onOkay: () {
-                        _showRewardedAd();
-                      },
-                      onCancel: () => null,
-                    );
-                  },
-                );
-              },
-              tooltip: 'Diamonds',
-              icon: Row(
-                children: [
-                  HugeIcon(
-                    icon: HugeIcons.strokeRoundedDiamond02,
-                    color: MyColors.themeColors[300]!,
-                  ),
-                  const SizedBox(width: 2),
-                  Selector<DiamondsProvider, int>(
-                    builder: (context, diamonds, child) {
-                      return Text(
-                        '$diamonds',
-                        style: MyTheme().mainTextStyle.copyWith(
-                              color: MyColors.themeColors[300],
-                            ),
-                      );
-                    },
-                    selector: (ctx, provider) => provider.diamonds,
-                  ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            Text(
-              'eWords',
-              style: MyTheme().secondaryTextStyle.copyWith(
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
-                  ),
-            ),
-            const Spacer(),
-            IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const DictionaryPage(),
-                  ),
-                );
-              },
-              tooltip: 'Dictionary',
-              icon: HugeIcon(
-                icon: HugeIcons.strokeRoundedSearch01,
-                color: MyColors.themeColors[300]!,
-              ),
-            ),
-            IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                MyTheme.initialize(context);
-                RecentUnit.loadRecentTap(
-                  context: context,
-                  onError: (msg) {
-                    SnackBarHelper.show(
-                      context: context,
-                      widget: MySnackBar.create(content: msg),
-                    );
-                  },
-                  onSuccess: (index) {
-                    MyTheme.initialize(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UnitContentPage(),
-                        settings: RouteSettings(
-                          arguments:
-                              context.read<UnitsProvider>().units![index],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              tooltip: 'Learning',
-              icon: HugeIcon(
-                icon: HugeIcons.strokeRoundedOnlineLearning01,
-                color: MyColors.themeColors[300]!,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

@@ -1,4 +1,7 @@
 import 'package:ewords/db/favorite_word_helper.dart';
+import 'package:ewords/ui/dialogs/app_dialog.dart';
+import 'package:ewords/ui/my_widgets/word_detail.dart';
+import 'package:ewords/utils/helpers/dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -110,7 +113,18 @@ class _FavoriteTabState extends State<FavoriteTab> {
                   final favorite = favoriteList[index];
 
                   return MyListTile(
-                    onTap: () {},
+                    onTap: () {
+                      DialogHelper.show(
+                        context: context,
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return AppDialog(
+                            customContent: WordDetail(word: favorite),
+                            cancelText: 'Hide',
+                            onCancel: () => null,
+                          );
+                        },
+                      );
+                    },
                     isTrailingVisible: true,
                     trailing: [
                       Selector<TTSProvider, int>(

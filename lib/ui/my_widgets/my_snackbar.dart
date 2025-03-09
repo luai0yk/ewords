@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MySnackBar {
-  static SnackBar create({required content, label, Function()? onPressed}) {
+  static SnackBar create(
+      {required String content, label, Function()? onPressed}) {
     return SnackBar(
       content: Text(content),
       action: SnackBarAction(
