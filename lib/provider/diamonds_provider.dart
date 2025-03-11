@@ -8,7 +8,7 @@ class DiamondsProvider with ChangeNotifier {
 
   Future<void> loadDiamonds() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _diamonds = prefs.getInt('diamond') ?? 5;
+    _diamonds = prefs.getInt('diamond') ?? 6;
     notifyListeners();
   }
 
@@ -17,11 +17,11 @@ class DiamondsProvider with ChangeNotifier {
     double score = (correctAnswers / 20) * 100;
 
     if (score >= 90) {
-      _diamonds = (prefs.getInt('diamond') ?? 5) + 5;
+      _diamonds = (prefs.getInt('diamond') ?? 6) + 6;
     } else if (score >= 75) {
-      _diamonds = (prefs.getInt('diamond') ?? 5) + 3;
+      _diamonds = (prefs.getInt('diamond') ?? 6) + 3;
     } else if (score >= 50) {
-      _diamonds = (prefs.getInt('diamond') ?? 5) + 2;
+      _diamonds = (prefs.getInt('diamond') ?? 6) + 2;
     }
 
     await prefs.setInt('diamond', _diamonds);
@@ -32,6 +32,15 @@ class DiamondsProvider with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     _diamonds = (_diamonds + diamonds);
+
+    await prefs.setInt('diamond', _diamonds);
+    notifyListeners();
+  }
+
+  Future<void> minusDiamonds({required int diamonds}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    _diamonds = (_diamonds - diamonds);
 
     await prefs.setInt('diamond', _diamonds);
     notifyListeners();

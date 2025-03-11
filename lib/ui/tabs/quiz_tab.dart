@@ -1,4 +1,6 @@
 import 'package:ewords/models/unit_model.dart';
+import 'package:ewords/ui/my_widgets/my_snackbar.dart';
+import 'package:ewords/utils/helpers/snackbar_helper.dart';
 import 'package:ewords/utils/tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +12,9 @@ import '../../provider/diamonds_provider.dart';
 import '../../provider/quiz_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../../utils/ads/reward_ad.dart';
 import '../../utils/helpers/dialog_helper.dart';
+import '../dialogs/app_dialog.dart';
 import '../dialogs/complete_quiz_dialog.dart';
 import '../dialogs/pasue_resume_dialog.dart';
 import '../my_widgets/my_card.dart';
@@ -30,20 +34,20 @@ class QuizTab extends StatefulWidget {
 }
 
 class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
+  //late RewardAd _rewardAd;
+
   QuizProvider? _quizProvider;
+  DiamondsProvider? _diamondsProvider;
 
   @override
   void initState() {
     super.initState();
     _quizProvider = context.read<QuizProvider>();
+    _diamondsProvider = context.read<DiamondsProvider>();
+    _diamondsProvider!.loadDiamonds();
     _quizProvider!.loadWords(widget.unit);
 
     WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -176,7 +180,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
-                            'C: ${provider.correctCount}',
+                            'C:${provider.correctCount}',
                             style: const TextStyle(
                               color: Colors.green,
                               fontWeight: FontWeight.bold,
@@ -191,7 +195,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
-                            'W: ${provider.wrongCount}',
+                            'W:${provider.wrongCount}',
                             style: const TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
@@ -199,6 +203,48 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                           ),
                         ),
                         const Spacer(),
+                        IconButton(
+                          onPressed: () async {
+                            await _quizProvider!.useHelp(
+                              diamondProvider: _diamondsProvider!,
+                              onError: () {
+                                SnackBarHelper.show(
+                                  context: context,
+                                  widget: MySnackBar.create(
+                                    content:
+                                        "You don't have sufficient diamonds",
+                                    label: 'Get some',
+                                    onPressed: () {
+                                      DialogHelper.show(
+                                        context: context,
+                                        pageBuilder: (context, animation,
+                                            secondaryAnimation) {
+                                          return AppDialog(
+                                            title: 'Rewarded Ad',
+                                            content:
+                                                'Watch an ad and get 5 diamonds.',
+                                            okayText: 'Watch Ad',
+                                            onOkay: () {
+                                              context
+                                                  .read<RewardAd>()
+                                                  .showRewardedAd();
+                                            },
+                                            onCancel: () => null,
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          tooltip: 'Help',
+                          icon: HugeIcon(
+                            icon: HugeIcons.strokeRoundedIdea,
+                            color: MyColors.themeColors[300]!,
+                          ),
+                        ),
                         IconButton(
                           onPressed: () {
                             DialogHelper.show(
@@ -212,6 +258,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                               },
                             );
                           },
+                          tooltip: _quizProvider!.isPaused ? 'Resume' : 'Pause',
                           icon: HugeIcon(
                             icon: _quizProvider!.isPaused
                                 ? HugeIcons.strokeRoundedPlay

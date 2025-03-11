@@ -1,6 +1,7 @@
 import 'package:ewords/provider/diamonds_provider.dart';
 import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
+import 'package:ewords/utils/ads/reward_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,10 +54,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late RewardAd _rewardAd;
+
   @override
   void initState() {
     super.initState();
     init();
+
+    _rewardAd = RewardAd(
+      context: context,
+      onRewardEarned: () {
+        context.read<DiamondsProvider>().adRewardDiamonds(diamonds: 6);
+      },
+    );
+
+    _rewardAd.loadRewardedAd();
   }
 
   void init() async {
@@ -66,37 +78,37 @@ class _MyAppState extends State<MyApp> {
     await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
     // Remove the splash screen after the units are fetched
     FlutterNativeSplash.remove();
-
-    // int score = await QuizScoreHelper.instance.getCorrectAnswersById(id: 1);
-    // print('score: $score');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SettingsProvider>(
-      builder: (context, provider, child) {
-        return ScreenUtilInit(
-          designSize:
-              const Size(360, 690), // Set the design size for responsive layout
-          minTextAdapt:
-              true, // Enable text adaptation for different screen sizes
-          splitScreenMode: true, // Enable split screen mode for large devices
-          builder: (context, child) {
-            return MaterialApp(
-              theme: MyTheme.lightTheme, // Set the light theme
-              darkTheme: MyTheme.darkTheme, // Set the dark theme
-              themeMode: provider.themeState == 'Light'
-                  ? ThemeMode.light // Use light theme if selected
-                  : provider.themeState == 'Dark'
-                      ? ThemeMode.dark // Use dark theme if selected
-                      : ThemeMode
-                          .system, // Use system theme if no specific selection
-              debugShowCheckedModeBanner: false, // Hide the debug banner
-              home: const HomePage(), // Set the home page of the app
-            );
-          },
-        );
-      },
+    return Provider.value(
+      value: _rewardAd,
+      child: Consumer<SettingsProvider>(
+        builder: (context, provider, child) {
+          return ScreenUtilInit(
+            designSize: const Size(
+                360, 690), // Set the design size for responsive layout
+            minTextAdapt:
+                true, // Enable text adaptation for different screen sizes
+            splitScreenMode: true, // Enable split screen mode for large devices
+            builder: (context, child) {
+              return MaterialApp(
+                theme: MyTheme.lightTheme, // Set the light theme
+                darkTheme: MyTheme.darkTheme, // Set the dark theme
+                themeMode: provider.themeState == 'Light'
+                    ? ThemeMode.light // Use light theme if selected
+                    : provider.themeState == 'Dark'
+                        ? ThemeMode.dark // Use dark theme if selected
+                        : ThemeMode
+                            .system, // Use system theme if no specific selection
+                debugShowCheckedModeBanner: false, // Hide the debug banner
+                home: const HomePage(), // Set the home page of the app
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

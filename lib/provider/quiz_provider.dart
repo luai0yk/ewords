@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:ewords/db/quiz_score_helper.dart';
 import 'package:ewords/models/unit_model.dart';
+import 'package:ewords/provider/diamonds_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -134,11 +135,6 @@ class QuizProvider extends ChangeNotifier {
         RegExp('\\b$correctAnswer\\b', caseSensitive: false), '_____');
   }
 
-  void togglePauseResume() {
-    isPaused = !isPaused;
-    notifyListeners();
-  }
-
   Future<void> insertOrUpdateQuizScore({required QuizScoreModel score}) async {
     await QuizScoreHelper.instance.insertOrUpdateQuizScore(
       QuizScoreModel(
@@ -196,5 +192,20 @@ class QuizProvider extends ChangeNotifier {
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  // Function to help the user choose the right answers but minus 3 diamonds
+  Future<void> useHelp(
+      {required DiamondsProvider diamondProvider,
+      required Function() onError}) async {
+    if (diamondProvider.diamonds >= 3) {
+      _selectedAnswer = _correctAnswer;
+
+      diamondProvider.minusDiamonds(diamonds: 3);
+
+      notifyListeners();
+    } else {
+      onError();
+    }
   }
 }

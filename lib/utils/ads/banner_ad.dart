@@ -1,5 +1,5 @@
 import 'package:ewords/theme/my_colors.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdBanner extends StatefulWidget {
@@ -25,11 +25,12 @@ class _AdBannerState extends State<AdBanner> {
             MediaQuery.of(context).size.width.truncate());
 
     if (adSize == null) {
+      print('Failed to get adaptive banner ad size.');
       return;
     }
 
     _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111', // Test Ad Unit ID
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
       size: adSize,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -37,6 +38,7 @@ class _AdBannerState extends State<AdBanner> {
           _isAdLoaded = true;
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Ad failed to load: $error');
           ad.dispose();
           _isAdLoaded = false;
         },

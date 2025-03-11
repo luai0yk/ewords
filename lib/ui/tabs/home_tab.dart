@@ -27,8 +27,6 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  late RewardAd _rewardAd;
-
   DiamondsProvider? _diamondsProvider;
   QuizProvider? _quizProvider;
 
@@ -37,15 +35,6 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     super.initState();
-
-    _rewardAd = RewardAd(
-      context: context,
-      onRewardEarned: () {
-        _diamondsProvider!.adRewardDiamonds(diamonds: 5);
-      },
-    );
-
-    _rewardAd.loadRewardedAd();
   }
 
   @override
@@ -136,7 +125,7 @@ class _HomeTabState extends State<HomeTab> {
             deltaFactor: 0.06,
             child: FloatingAppBar(
               showRewardedAd: () {
-                _rewardAd.showRewardedAd();
+                context.read<RewardAd>().showRewardedAd();
               },
             ),
           ),
