@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../provider/settings_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../my_widgets/app_button.dart';
 
 class ChangeThemeDialog extends StatelessWidget {
   const ChangeThemeDialog({super.key});
@@ -76,23 +77,11 @@ class ChangeThemeDialog extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: MyColors.themeColors[300],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  )),
+            AppButton(
+              text: 'Cancel',
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                ),
-              ),
             ),
           ],
         ),

@@ -44,7 +44,7 @@ class FloatingAppBar extends StatelessWidget {
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return AppDialog(
                       title: 'Rewarded Ad',
-                      content: 'Watch an ad and get 5 diamonds.',
+                      content: 'Watch an ad and get 6 diamonds.',
                       okayText: 'Watch Ad',
                       onOkay: () {
                         showRewardedAd();

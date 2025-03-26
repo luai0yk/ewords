@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../my_widgets/app_button.dart';
 
 class DownloadTtsAssistantDialog extends StatelessWidget {
   const DownloadTtsAssistantDialog({super.key});
@@ -78,13 +79,8 @@ class DownloadTtsAssistantDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Button to navigate to TTS settings
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.themeColors[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+            AppButton(
+              text: 'Go to my settings',
               onPressed: () async {
                 const AndroidIntent intent = AndroidIntent(
                   action: 'com.android.settings.TTS_SETTINGS',
@@ -93,34 +89,13 @@ class DownloadTtsAssistantDialog extends StatelessWidget {
                 await intent.launch();
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text(
-                'Go to my settings',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                ),
-              ),
             ),
             // Cancel button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.themeColors[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+            AppButton(
+              text: 'Cancel',
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                ),
-              ),
             ),
           ],
         )

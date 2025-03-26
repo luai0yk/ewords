@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../my_widgets/app_button.dart';
 
 class AppDialog extends StatelessWidget {
   final String? title, content;
@@ -46,64 +46,28 @@ class AppDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (onOkay != null)
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.themeColors[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
+              AppButton(
+                text: okayText ?? 'Okay',
                 onPressed: () {
                   onOkay!();
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  okayText ?? 'Okay',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                  ),
-                ),
               ),
             if (onCancel != null)
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.themeColors[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
+              AppButton(
+                text: cancelText ?? 'Cancel',
                 onPressed: () {
                   onCancel!();
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  cancelText ?? 'Cancel',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                  ),
-                ),
               ),
             if (onOther != null)
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.themeColors[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
+              AppButton(
+                text: otherText ?? 'Other',
                 onPressed: () {
                   onOther!();
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  otherText ?? 'Other',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                  ),
-                ),
               ),
           ],
         ),

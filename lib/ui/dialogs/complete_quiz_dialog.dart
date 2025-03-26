@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../my_widgets/app_button.dart';
 
 class CompleteQuizDialog extends StatelessWidget {
   final Function() onRestart;
@@ -35,44 +36,20 @@ class CompleteQuizDialog extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.themeColors[300],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
+                AppButton(
+                  text: 'Restart',
                   onPressed: () {
                     onRestart();
                     Navigator.of(context).pop();
                   },
-                  child: Text(
-                    'Restart',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
-                    ),
-                  ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.themeColors[300],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
+                AppButton(
+                  text: 'Quit',
                   onPressed: () {
                     onRestart();
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
-                  child: Text(
-                    'Quit',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
-                    ),
-                  ),
                 ),
               ],
             ),

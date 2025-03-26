@@ -31,10 +31,16 @@ class _HomeTabState extends State<HomeTab> {
   QuizProvider? _quizProvider;
 
   final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _unitKeys = {};
 
   @override
   void initState() {
     super.initState();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToActiveUnit(context.read<UnitsProvider>().units!,
+    //       context.read<UnitsProvider>().scores!);
+    // });
   }
 
   @override
@@ -60,7 +66,9 @@ class _HomeTabState extends State<HomeTab> {
                   child: CircularProgressIndicator(strokeWidth: 10),
                 );
               }
+
               return ListView.builder(
+                key: const PageStorageKey<String>('units'),
                 controller: _scrollController,
                 padding: EdgeInsets.only(
                   right: MediaQuery.of(context).size.width * 0.22,
@@ -134,6 +142,28 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  void _scrollToActiveUnit(List<UnitModel> units, List<QuizScoreModel> scores) {
+    final QuizProvider quizProvider = context.read<QuizProvider>();
+    for (int i = 0; i < units.length; i++) {
+      final UnitModel unit = units[i];
+      final unitStatus = quizProvider.getUnitStatus(unit.id);
+      if (unitStatus['current_active_unit'] == 5) {
+        final GlobalKey? key = _unitKeys[unit.id];
+        if (key != null && key.currentContext != null) {
+          final RenderBox renderBox =
+              key.currentContext!.findRenderObject() as RenderBox;
+          final position = renderBox.localToGlobal(Offset.zero);
+          _scrollController.animateTo(
+            position.dy + _scrollController.offset,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+        break;
+      }
+    }
+  }
+
   Widget _buildListItem(
       int index, List<UnitModel> units, List<QuizScoreModel> scores) {
     Color? unPassedUnitColor = Theme.of(context).brightness == Brightness.light
@@ -159,12 +189,13 @@ class _HomeTabState extends State<HomeTab> {
           score = scores[index];
         }
 
+        _unitKeys[unit.id] = GlobalKey();
+
         return Container(
+          key: _unitKeys[unit.id],
           alignment: alignment,
           child: Container(
             width: 100.w,
-            // height: 120.h,
-            // color: Colors.red,
             margin: EdgeInsets.symmetric(vertical: 30.h),
             child: Column(
               children: [

@@ -5,8 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/quiz_provider.dart';
-import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
+import '../my_widgets/app_button.dart';
 
 class PauseResumeDialog extends StatelessWidget {
   final TabController tabController;
@@ -36,43 +36,19 @@ class PauseResumeDialog extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.themeColors[300],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
+                AppButton(
+                  text: 'Resume',
                   onPressed: () {
                     context.read<QuizProvider>().isPaused = false;
                     Navigator.of(context).pop();
                   },
-                  child: Text(
-                    'Resume',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
-                    ),
-                  ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.themeColors[300],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
+                AppButton(
+                  text: 'Quit',
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
-                  child: Text(
-                    'Quit',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
-                    ),
-                  ),
                 ),
               ],
             ),

@@ -222,7 +222,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                                           return AppDialog(
                                             title: 'Rewarded Ad',
                                             content:
-                                                'Watch an ad and get 5 diamonds.',
+                                                'Watch an ad and get 6 diamonds.',
                                             okayText: 'Watch Ad',
                                             onOkay: () {
                                               context
