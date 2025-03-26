@@ -37,60 +37,59 @@ class MyListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Hero(
-        tag: 'fav',
-        child: MyCard(
-          margin: const EdgeInsets.only(bottom: 15),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Visibility(
-                      visible: isWordDetailVisible,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: MyColors.themeColors[50],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                MyConstants.levelCodes[word.bookId - 1],
-                                style: TextStyle(
-                                  color: MyColors.themeColors[300],
-                                  fontWeight: FontWeight.bold,
+      child: MyCard(
+        margin: const EdgeInsets.only(bottom: 15),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Visibility(
+                        visible: isWordDetailVisible,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: MyColors.themeColors[50],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  MyConstants.levelCodes[word.bookId - 1],
+                                  style: TextStyle(
+                                    color: MyColors.themeColors[300],
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: MyColors.themeColors[50],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                'U:${word.unitId}',
-                                style: TextStyle(
-                                  color: MyColors.themeColors[300],
-                                  fontWeight: FontWeight.bold,
+                              const SizedBox(width: 5),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: MyColors.themeColors[50],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  'U:${word.unitId}',
+                                  style: TextStyle(
+                                    color: MyColors.themeColors[300],
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Material(
-                      child: Text(
-                        word.word,
+                      Text(
+                        ' ${word.word.substring(0, 1).toUpperCase() + word.word.substring(1)}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -99,38 +98,34 @@ class MyListTile extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Material(
-                      child: Text(
-                        word.definition,
-                        maxLines: textMaxLines != 0 ? textMaxLines : 100,
-                        style: MyTheme().secondaryTextStyle.copyWith(
-                              fontSize: textSize.sp,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Material(
-                      child: Text(
-                        word.example,
-                        maxLines: subTextMaxLines != 0 ? subTextMaxLines : 10,
-                        style: MyTheme().thirdTextStyle.copyWith(
-                              fontSize: subTextSize.sp,
-                            ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  Text(
+                    word.definition,
+                    maxLines: textMaxLines != 0 ? textMaxLines : 100,
+                    style: MyTheme().secondaryTextStyle.copyWith(
+                          fontSize: textSize.sp,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    word.example,
+                    maxLines: subTextMaxLines != 0 ? subTextMaxLines : 10,
+                    style: MyTheme().thirdTextStyle.copyWith(
+                          fontSize: subTextSize.sp,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-              Visibility(
-                visible: isTrailingVisible,
-                child: Column(
-                  children: trailing ?? [],
-                ),
+            ),
+            Visibility(
+              visible: isTrailingVisible,
+              child: Column(
+                children: trailing ?? [],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

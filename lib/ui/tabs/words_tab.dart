@@ -147,4 +147,11 @@ class _WordsTabState extends State<WordsTab> {
       },
     );
   }
+
+  @override
+  void dispose() {
+    flutterTts?.stop();
+    ttsProvider?.stop(listen: false);
+    super.dispose();
+  }
 }

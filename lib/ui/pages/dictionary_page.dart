@@ -42,8 +42,9 @@ class _DictionaryPageState extends State<DictionaryPage> {
 
   @override
   void dispose() {
-    super.dispose();
+    _controller.dispose();
     dictionaryProvider!.close();
+    super.dispose();
   }
 
   @override
