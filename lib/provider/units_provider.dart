@@ -11,6 +11,9 @@ class UnitsProvider extends ChangeNotifier {
   List<QuizScoreModel>? scores;
   List<WordModel>? words;
 
+  double? score;
+  int? answeredQuestionCount;
+
   Future<void> fetchUnits() async {
     units = await UnitHelper.instance.getUnits();
     notifyListeners();
@@ -19,5 +22,18 @@ class UnitsProvider extends ChangeNotifier {
   Future<void> fetchScores() async {
     scores = await QuizScoreHelper.instance.getQuizScores();
     notifyListeners();
+  }
+
+  void scoreById({required int id}) {
+    List<QuizScoreModel> myScore =
+        scores!.where((element) => element.id == id).toList();
+
+    if (myScore.isNotEmpty) {
+      score = myScore.first.totalScore;
+      answeredQuestionCount = myScore.first.correctAnswers;
+    } else {
+      score = 0.0;
+      answeredQuestionCount = 0;
+    }
   }
 }

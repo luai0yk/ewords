@@ -4,6 +4,7 @@ import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
 import 'package:ewords/theme/my_colors.dart';
 import 'package:ewords/theme/my_theme.dart';
+import 'package:ewords/ui/my_widgets/stars_rate.dart';
 import 'package:ewords/ui/pages/unit_content_page.dart';
 import 'package:ewords/utils/ads/reward_ad.dart';
 import 'package:ewords/utils/constants.dart';
@@ -37,10 +38,13 @@ class _HomeTabState extends State<HomeTab> {
   void initState() {
     super.initState();
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _scrollToActiveUnit(context.read<UnitsProvider>().units!,
-    //       context.read<UnitsProvider>().scores!);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          context.read<UnitsProvider>().units != null &&
+          context.read<UnitsProvider>().scores != null) {
+        _scrollToActiveUnit(context.read<UnitsProvider>().units!);
+      }
+    });
   }
 
   @override
@@ -142,25 +146,37 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  void _scrollToActiveUnit(List<UnitModel> units, List<QuizScoreModel> scores) {
+  void _scrollToActiveUnit(List<UnitModel> units) {
     final QuizProvider quizProvider = context.read<QuizProvider>();
+    // Find the active unit index in the ListView
+    int activeUnitIndex = -1;
+    int activeUnitId = -1;
+
     for (int i = 0; i < units.length; i++) {
       final UnitModel unit = units[i];
       final unitStatus = quizProvider.getUnitStatus(unit.id);
-      if (unitStatus['current_active_unit'] == 5) {
-        final GlobalKey? key = _unitKeys[unit.id];
+      if (unitStatus['current_active_unit'] == unit.id) {
+        activeUnitId = unit.id;
+        // Calculate the actual index in the ListView (accounting for header items)
+        activeUnitIndex = i;
+        break;
+      }
+    }
+
+    if (activeUnitIndex >= 0) {
+      // Schedule a post-frame callback to ensure the keys are properly initialized
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final GlobalKey? key = _unitKeys[activeUnitId];
         if (key != null && key.currentContext != null) {
-          final RenderBox renderBox =
-              key.currentContext!.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
-          _scrollController.animateTo(
-            position.dy + _scrollController.offset,
+          // Get the render object and calculate its position
+          Scrollable.ensureVisible(
+            key.currentContext!,
+            alignment: 0.5, // Center the item
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
           );
         }
-        break;
-      }
+      });
     }
   }
 
@@ -252,7 +268,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ),
                 if (isPassed && score != null)
-                  _buildUnitStars(score: score.totalScore),
+                  StarsRate(score: score.totalScore),
               ],
             ),
           ),
@@ -261,37 +277,6 @@ class _HomeTabState extends State<HomeTab> {
       selector: (context, selector) {
         return selector.getUnitStatus(unit.id);
       },
-    );
-  }
-
-  Widget _buildUnitStars({required double score}) {
-    Color? firstStarColor, secondStarColor, thirdStarColor;
-
-    firstStarColor =
-        score >= 50 ? MyColors.themeColors[300] : MyColors.themeColors[50];
-    secondStarColor =
-        score >= 75 ? MyColors.themeColors[300] : MyColors.themeColors[50];
-    thirdStarColor =
-        score >= 90 ? MyColors.themeColors[300] : MyColors.themeColors[50];
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedStar,
-          color: firstStarColor!,
-        ),
-        const SizedBox(width: 3),
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedStar,
-          color: secondStarColor!,
-        ),
-        const SizedBox(width: 3),
-        HugeIcon(
-          icon: HugeIcons.strokeRoundedStar,
-          color: thirdStarColor!,
-        ),
-      ],
     );
   }
 

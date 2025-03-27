@@ -1,5 +1,8 @@
 import 'package:ewords/models/unit_model.dart';
+import 'package:ewords/provider/units_provider.dart';
+import 'package:ewords/ui/my_widgets/app_button.dart';
 import 'package:ewords/ui/my_widgets/my_snackbar.dart';
+import 'package:ewords/ui/my_widgets/stars_rate.dart';
 import 'package:ewords/utils/helpers/snackbar_helper.dart';
 import 'package:ewords/utils/tts.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/quiz_score_model.dart';
 import '../../provider/diamonds_provider.dart';
 import '../../provider/quiz_provider.dart';
 import '../../theme/my_colors.dart';
@@ -15,8 +17,6 @@ import '../../theme/my_theme.dart';
 import '../../utils/ads/reward_ad.dart';
 import '../../utils/helpers/dialog_helper.dart';
 import '../dialogs/app_dialog.dart';
-import '../dialogs/complete_quiz_dialog.dart';
-import '../dialogs/pasue_resume_dialog.dart';
 import '../my_widgets/my_card.dart';
 
 class QuizTab extends StatefulWidget {
@@ -37,6 +37,10 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
   //late RewardAd _rewardAd;
 
   QuizProvider? _quizProvider;
+  UnitsProvider? _unitsProvider;
+  // double? _score;
+  // int? _answerdQuestionCount;
+
   DiamondsProvider? _diamondsProvider;
 
   @override
@@ -44,9 +48,12 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     super.initState();
     _quizProvider = context.read<QuizProvider>();
     _diamondsProvider = context.read<DiamondsProvider>();
+    _unitsProvider = context.read<UnitsProvider>();
     _diamondsProvider!.loadDiamonds();
-    _quizProvider!.loadWords(widget.unit);
-
+    _unitsProvider!.scoreById(id: widget.unit.id);
+    _quizProvider!.unit = widget.unit;
+    // Don't automatically load words to show start screen first
+    _quizProvider!.cover(true); // Show the covered card initially
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -60,14 +67,10 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
       context.read<QuizProvider>().isPaused = true;
-      DialogHelper.show(
-        context: context,
-        isDismissible: false,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return PauseResumeDialog(tabController: widget.tabController);
-        },
-      );
-    } else if (state == AppLifecycleState.resumed) {}
+      _quizProvider!.cover(true); // Cover the quiz when app is paused
+    } else if (state == AppLifecycleState.resumed) {
+      // Keep the quiz covered when resumed, let user manually resume
+    }
   }
 
   @override
@@ -75,45 +78,11 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     return Scaffold(
       body: Consumer<QuizProvider>(
         builder: (context, provider, child) {
-          return ValueListenableBuilder<bool>(
-            valueListenable: provider.isQuizCompleted,
-            builder: (context, isQuizCompleted, child) {
-              if (isQuizCompleted) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (ModalRoute.of(context)?.isCurrent ?? false) {
-                    provider.insertOrUpdateQuizScore(
-                      score: QuizScoreModel(
-                        id: widget.unit.id,
-                        unitId: widget.unit.unitId,
-                        bookId: widget.unit.bookId,
-                        correctAnswers: provider.correctCount,
-                      ),
-                    );
-
-                    context.read<DiamondsProvider>().updateDiamonds(
-                          correctAnswers: provider.correctCount,
-                        );
-
-                    DialogHelper.show(
-                      context: context,
-                      isDismissible: false,
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return CompleteQuizDialog(
-                          tabController: widget.tabController,
-                          onRestart: () {
-                            provider.isQuizCompleted.value = false;
-                            provider.loadWords(widget.unit);
-                          },
-                        );
-                      },
-                    );
-                  }
-                });
-              }
-
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: Stack(
+              children: [
+                Column(
                   children: [
                     MyCard(
                       alignment: Alignment.topLeft,
@@ -247,22 +216,11 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                         ),
                         IconButton(
                           onPressed: () {
-                            DialogHelper.show(
-                              context: context,
-                              isDismissible: false,
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) {
-                                return PauseResumeDialog(
-                                  tabController: widget.tabController,
-                                );
-                              },
-                            );
+                            provider.cover(true);
                           },
-                          tooltip: _quizProvider!.isPaused ? 'Resume' : 'Pause',
+                          tooltip: 'Pause',
                           icon: HugeIcon(
-                            icon: _quizProvider!.isPaused
-                                ? HugeIcons.strokeRoundedPlay
-                                : HugeIcons.strokeRoundedPause,
+                            icon: HugeIcons.strokeRoundedPause,
                             color: MyColors.themeColors[300]!,
                           ),
                         ),
@@ -339,6 +297,15 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                               if (provider.selectedAnswer == choice &&
                                   !provider.isAnswered) {
                                 provider.checkAnswer(choice);
+                                if ((provider.correctCount +
+                                        provider.wrongCount) ==
+                                    20) {
+                                  context
+                                      .read<DiamondsProvider>()
+                                      .updateDiamonds(
+                                        correctAnswers: provider.correctCount,
+                                      );
+                                }
                               } else {
                                 TTS.instance.speak(choice);
                                 provider.setSelectedAnswer(choice);
@@ -352,11 +319,202 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                     SizedBox(height: 5.h),
                   ],
                 ),
-              );
-            },
+                Visibility(
+                  visible: provider.isCovered ? true : false,
+                  child: MyCard(
+                    isBorderd: false,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10.sp,
+                      horizontal: MediaQuery.of(context).size.width / 10,
+                    ),
+                    child: provider.isQuizStarted && provider.isPaused
+                        ? _buildPauseScreen(provider)
+                        : provider.isQuizStarted
+                            ? _buildCompletionScreen(provider)
+                            : _buildStartScreen(provider),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildStartScreen(QuizProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Quiz for ${widget.unit.unitId}',
+          style: MyTheme().mainTextStyle.copyWith(
+                fontSize: 22.sp,
+                color: MyColors.themeColors[300],
+              ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 20.h),
+        if (_unitsProvider!.score != null)
+          Column(
+            children: [
+              Text(
+                'Previous Score',
+                style: MyTheme().secondaryTextStyle.copyWith(
+                      fontSize: 16.sp,
+                    ),
+              ),
+              SizedBox(height: 10.h),
+              StarsRate(
+                score: _unitsProvider!.score ?? 0,
+                size: 40,
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                '${_unitsProvider!.score?.toInt() ?? 0}%',
+                style: MyTheme().mainTextStyle.copyWith(
+                      fontSize: 30.sp,
+                      color: MyColors.themeColors[300],
+                    ),
+              ),
+              SizedBox(height: 5.h),
+              Text(
+                'You answered ${_unitsProvider!.answeredQuestionCount ?? 0} out of 20 questions correctly.',
+                textAlign: TextAlign.center,
+                style: MyTheme().secondaryTextStyle.copyWith(
+                      fontSize: 14.sp,
+                    ),
+              ),
+            ],
+          ),
+        SizedBox(height: 30.h),
+        AppButton(
+          text: _unitsProvider!.score != null ? 'Retake Quiz' : 'Start Quiz',
+          onPressed: () {
+            _quizProvider!.loadWords(widget.unit);
+            provider.cover(false);
+          },
+        ),
+        AppButton(
+          text: 'Back to Home',
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPauseScreen(QuizProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Quiz Paused',
+          style: MyTheme().mainTextStyle.copyWith(
+                fontSize: 24.sp,
+                color: MyColors.themeColors[300],
+              ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 20.h),
+        Text(
+          'Current Progress',
+          style: MyTheme().secondaryTextStyle.copyWith(
+                fontSize: 16.sp,
+              ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          'Question ${provider.questionNumber + 1} of 20',
+          style: MyTheme().mainTextStyle.copyWith(
+                fontSize: 18.sp,
+              ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 5.h),
+        Text(
+          'Correct: ${provider.correctCount} | Wrong: ${provider.wrongCount}',
+          style: MyTheme().secondaryTextStyle.copyWith(
+                fontSize: 16.sp,
+              ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 30.h),
+        AppButton(
+          text: 'Resume Quiz',
+          onPressed: () {
+            provider.cover(false);
+          },
+        ),
+        AppButton(
+          text: 'Quit Quiz',
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompletionScreen(QuizProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        StarsRate(
+          score: (provider.correctCount / 20) * 100,
+          size: 50,
+        ),
+        SizedBox(height: 30.h),
+        MyCard(
+          padding: EdgeInsets.all(14.sp),
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              Text(
+                '${((provider.correctCount / 20) * 100).toInt()}%',
+                style: MyTheme().mainTextStyle.copyWith(
+                      fontSize: 40.sp,
+                      color: MyColors.themeColors[300],
+                    ),
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                'You answered ${provider.correctCount} out of 20 questions correctly.',
+                textAlign: TextAlign.center,
+                style: MyTheme().secondaryTextStyle.copyWith(
+                      fontSize: 14.sp,
+                    ),
+              ),
+              SizedBox(height: 30.h),
+              Text(
+                'Keep studying and try hard',
+                style: MyTheme().secondaryTextStyle.copyWith(
+                      fontSize: 16.sp,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 50.h),
+        AppButton(
+          text: 'Try Again',
+          onPressed: () {
+            _quizProvider!.loadWords(widget.unit);
+            provider.cover(false);
+          },
+        ),
+        AppButton(
+          text: 'Back to Home',
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
     );
   }
 }

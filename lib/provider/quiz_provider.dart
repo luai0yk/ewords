@@ -12,6 +12,7 @@ import '../models/word_model.dart';
 
 class QuizProvider extends ChangeNotifier {
   double _progress = 0.0;
+  double _savedProgress = 0.0; // Added to store progress when paused
   int _currentActiveUnit = 0;
   final int duration = 30;
   int _questionNumber = 0;
@@ -24,8 +25,11 @@ class QuizProvider extends ChangeNotifier {
   bool isPaused = false;
   int _correctCount = 0;
   int _wrongCount = 0;
+  bool _isCovered = true;
+  bool _isQuizStarted = false;
+  UnitModel? unit;
   final Random _random = Random();
-  ValueNotifier<bool> isQuizCompleted = ValueNotifier<bool>(false);
+  //ValueNotifier<bool> isQuizCompleted = ValueNotifier<bool>(false);
 
   double get progress => _progress;
   int get questionNumber => _questionNumber;
@@ -36,6 +40,8 @@ class QuizProvider extends ChangeNotifier {
   bool get isAnswered => _isAnswered;
   int get correctCount => _correctCount;
   int get wrongCount => _wrongCount;
+  bool get isCovered => _isCovered;
+  bool get isQuizStarted => _isQuizStarted;
 
   void init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,24 +50,73 @@ class QuizProvider extends ChangeNotifier {
 
   set setProgress(double val) => _progress = val;
 
+  cover(state) {
+    _isCovered = state;
+    if (state == true) {
+      isPaused = true;
+      if (_timer != null) {
+        _savedProgress = _progress; // Save current progress when pausing
+        _timer!.cancel();
+      }
+    } else {
+      isPaused = false;
+      if (_questionNumber < _listWords.length && _isQuizStarted) {
+        _startProgress(continueFromCurrentProgress: true);
+      }
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
   void setSelectedAnswer(String val) {
     _selectedAnswer = val;
     notifyListeners();
   }
 
+  void resetQuiz() {
+    _listWords = [];
+    _questionNumber = 0;
+    _wrongCount = 0;
+    _correctCount = 0;
+    _isQuizStarted = false;
+    _isAnswered = false;
+    _selectedAnswer = "";
+    _correctAnswer = "";
+    _answerChoices = [];
+    _progress = 0.0;
+    _savedProgress = 0.0; // Reset saved progress
+    _timer?.cancel();
+    isPaused = false;
+    _isCovered = true;
+    notifyListeners();
+  }
+
   void loadWords(UnitModel unit) async {
+    // Reset the quiz state first
+    resetQuiz();
+
+    // Set the new unit and load its words
+    this.unit = unit;
+
     if (unit.words.isNotEmpty) {
       _listWords = unit.words;
       _questionNumber = 0;
       _wrongCount = 0;
       _correctCount = 0;
+      _isQuizStarted = true;
       _updateChoices();
     }
   }
 
-  void _startProgress() {
+  void _startProgress({bool continueFromCurrentProgress = false}) {
     _timer?.cancel();
-    _progress = 0.0;
+    if (!continueFromCurrentProgress) {
+      _progress = 0.0;
+      _savedProgress = 0.0;
+    } else {
+      _progress = _savedProgress; // Restore saved progress when resuming
+    }
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_progress < 1.0 && !isPaused) {
         _progress += 1 / duration;
@@ -71,7 +126,7 @@ class QuizProvider extends ChangeNotifier {
         if (!_isAnswered) {
           _wrongCount++;
         }
-        _moveToNextQuestion();
+        _moveToNextQuestion(unit);
         notifyListeners();
       }
     });
@@ -97,7 +152,7 @@ class QuizProvider extends ChangeNotifier {
     _selectedAnswer = "";
     _isAnswered = false;
     isPaused = false;
-    _startProgress();
+    _startProgress(continueFromCurrentProgress: false);
   }
 
   void checkAnswer(String selectedAnswer) {
@@ -115,16 +170,25 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
 
     Future.delayed(const Duration(milliseconds: 400), () {
-      _moveToNextQuestion();
+      _moveToNextQuestion(unit);
     });
   }
 
-  void _moveToNextQuestion() {
+  void _moveToNextQuestion(unit) {
     if (_questionNumber < _listWords.length - 1) {
       _questionNumber++;
       _updateChoices();
     } else {
-      isQuizCompleted.value = true;
+      //isQuizCompleted.value = true;
+      _isCovered = true;
+      insertOrUpdateQuizScore(
+        score: QuizScoreModel(
+          id: unit.id,
+          unitId: unit.unitId,
+          bookId: unit.bookId,
+          correctAnswers: correctCount,
+        ),
+      );
       _timer?.cancel();
     }
     notifyListeners();
