@@ -60,6 +60,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _quizProvider!.resetQuiz();
     super.dispose();
   }
 
@@ -67,9 +68,8 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
       context.read<QuizProvider>().isPaused = true;
-      _quizProvider!.cover(true); // Cover the quiz when app is paused
-    } else if (state == AppLifecycleState.resumed) {
-      // Keep the quiz covered when resumed, let user manually resume
+      _quizProvider!
+          .cover(true, pause: true); // Cover the quiz when app is paused
     }
   }
 
@@ -82,6 +82,14 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(10),
             child: Stack(
               children: [
+                ValueListenableBuilder(
+                  valueListenable: provider.isQuizCompleted,
+                  builder: (context, isCompleted, child) {
+                    return isCompleted
+                        ? _buildCompletionScreen(provider)
+                        : const SizedBox();
+                  },
+                ),
                 Column(
                   children: [
                     MyCard(
@@ -216,7 +224,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                         ),
                         IconButton(
                           onPressed: () {
-                            provider.cover(true);
+                            provider.cover(true, pause: true);
                           },
                           tooltip: 'Pause',
                           icon: HugeIcon(
@@ -327,9 +335,9 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                       vertical: 10.sp,
                       horizontal: MediaQuery.of(context).size.width / 10,
                     ),
-                    child: provider.isQuizStarted && provider.isPaused
+                    child: provider.isPaused
                         ? _buildPauseScreen(provider)
-                        : provider.isQuizStarted
+                        : provider.isQuizCompleted.value
                             ? _buildCompletionScreen(provider)
                             : _buildStartScreen(provider),
                   ),
@@ -348,7 +356,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Quiz for ${widget.unit.unitId}',
+          'Quiz for unit ${widget.unit.unitId}',
           style: MyTheme().mainTextStyle.copyWith(
                 fontSize: 22.sp,
                 color: MyColors.themeColors[300],
@@ -360,9 +368,9 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
           Column(
             children: [
               Text(
-                'Previous Score',
+                'Previous Saved Score',
                 style: MyTheme().secondaryTextStyle.copyWith(
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                     ),
               ),
               SizedBox(height: 10.h),
@@ -390,7 +398,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
           ),
         SizedBox(height: 30.h),
         AppButton(
-          text: _unitsProvider!.score != null ? 'Retake Quiz' : 'Start Quiz',
+          text: 'Start Quiz',
           onPressed: () {
             _quizProvider!.loadWords(widget.unit);
             provider.cover(false);
