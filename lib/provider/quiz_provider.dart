@@ -29,7 +29,7 @@ class QuizProvider extends ChangeNotifier {
   bool _isQuizStarted = false;
   UnitModel? unit;
   final Random _random = Random();
-  //ValueNotifier<bool> isQuizCompleted = ValueNotifier<bool>(false);
+  ValueNotifier<bool> isQuizCompleted = ValueNotifier<bool>(false);
 
   double get progress => _progress;
   int get questionNumber => _questionNumber;
@@ -50,10 +50,12 @@ class QuizProvider extends ChangeNotifier {
 
   set setProgress(double val) => _progress = val;
 
-  cover(state) {
+  cover(state, {pause = false}) {
     _isCovered = state;
     if (state == true) {
-      isPaused = true;
+      if (pause) {
+        isPaused = true;
+      }
       if (_timer != null) {
         _savedProgress = _progress; // Save current progress when pausing
         _timer!.cancel();
@@ -89,6 +91,8 @@ class QuizProvider extends ChangeNotifier {
     _timer?.cancel();
     isPaused = false;
     _isCovered = true;
+    isQuizCompleted.value = false;
+
     notifyListeners();
   }
 
@@ -179,7 +183,7 @@ class QuizProvider extends ChangeNotifier {
       _questionNumber++;
       _updateChoices();
     } else {
-      //isQuizCompleted.value = true;
+      isQuizCompleted.value = true;
       _isCovered = true;
       insertOrUpdateQuizScore(
         score: QuizScoreModel(
@@ -214,7 +218,7 @@ class QuizProvider extends ChangeNotifier {
     if (score.totalScore >= 50) {
       await prefs.setInt(
         'current_active_unit',
-        (score.id <= 179 ? score.id + 1 : 1),
+        (score.id + 1),
       );
     }
 

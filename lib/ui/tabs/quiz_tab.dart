@@ -63,15 +63,19 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
-      context.read<QuizProvider>().isPaused = true;
-      _quizProvider!.cover(true); // Cover the quiz when app is paused
-    } else if (state == AppLifecycleState.resumed) {
-      // Keep the quiz covered when resumed, let user manually resume
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
+  //     context.read<QuizProvider>().isPaused = true;
+  //     DialogHelper.show(
+  //       context: context,
+  //       isDismissible: false,
+  //       pageBuilder: (context, animation, secondaryAnimation) {
+  //         // return PauseResumeDialog(tabController: widget.tabController);
+  //       },
+  //     );
+  //   } else if (state == AppLifecycleState.resumed) {}
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +220,8 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                         ),
                         IconButton(
                           onPressed: () {
-                            provider.cover(true);
+                            provider.cover(
+                                true); // This will pause the timer and show the pause screen
                           },
                           tooltip: 'Pause',
                           icon: HugeIcon(
@@ -476,7 +481,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
           child: Column(
             children: [
               Text(
-                '${((provider.correctCount / 20) * 100).toInt()}%',
+                '${(_unitsProvider!.score ?? ((provider.correctCount / 20) * 100)).toInt()}%',
                 style: MyTheme().mainTextStyle.copyWith(
                       fontSize: 40.sp,
                       color: MyColors.themeColors[300],
@@ -484,7 +489,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
               ),
               SizedBox(height: 10.h),
               Text(
-                'You answered ${provider.correctCount} out of 20 questions correctly.',
+                'You answered ${_unitsProvider!.answeredQuestionCount} out of 20 questions correctly.',
                 textAlign: TextAlign.center,
                 style: MyTheme().secondaryTextStyle.copyWith(
                       fontSize: 14.sp,
