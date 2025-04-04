@@ -93,7 +93,9 @@ class QuizProvider extends ChangeNotifier {
     _isCovered = true;
     isQuizCompleted.value = false;
 
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void loadWords(UnitModel unit) async {

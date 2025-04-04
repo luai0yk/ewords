@@ -1,9 +1,9 @@
-import 'package:ewords/db/quiz_score_helper.dart';
 import 'package:ewords/models/quiz_score_model.dart';
 import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/models/word_model.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../db/quiz_score_helper.dart';
 import '../db/unit_helper.dart';
 
 class UnitsProvider extends ChangeNotifier {

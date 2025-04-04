@@ -1,6 +1,6 @@
 import 'package:ewords/models/word_model.dart';
-import 'package:ewords/theme/my_colors.dart';
 import 'package:ewords/theme/my_theme.dart';
+import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,6 +8,7 @@ import '../../utils/constants.dart';
 
 class WordDetail extends StatelessWidget {
   final WordModel word;
+
   const WordDetail({super.key, required this.word});
 
   @override
@@ -24,94 +25,31 @@ class WordDetail extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: MyColors.themeColors[50],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    '${MyConstants.levelCodes[word.bookId - 1]} - ${MyConstants.levelNames[word.bookId - 1]}',
-                    style: TextStyle(
-                      color: MyColors.themeColors[300],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                AppBadge(
+                  text:
+                      '${MyConstants.levelCodes[word.bookId - 1]} - ${MyConstants.levelNames[word.bookId - 1]}',
                 ),
                 const SizedBox(width: 5),
-                Container(
-                  decoration: BoxDecoration(
-                    color: MyColors.themeColors[50],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    'Unit:${word.unitId}',
-                    style: TextStyle(
-                      color: MyColors.themeColors[300],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                AppBadge(
+                  text: 'Unit:${word.unitId}',
                 ),
               ],
             ),
           ),
           SizedBox(height: 15.h),
-          Container(
-            decoration: BoxDecoration(
-              color: MyColors.themeColors[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            margin: EdgeInsets.only(bottom: 4.h),
-            child: Text(
-              'Word',
-              style: TextStyle(
-                color: MyColors.themeColors[300],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          const AppBadge(text: 'WORD'),
           Text(
             word.word.substring(0, 1).toUpperCase() + word.word.substring(1),
             style: MyTheme().mainTextStyle.copyWith(),
           ),
           SizedBox(height: 15.h),
-          Container(
-            decoration: BoxDecoration(
-              color: MyColors.themeColors[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            margin: EdgeInsets.only(bottom: 4.h),
-            child: Text(
-              'Definition',
-              style: TextStyle(
-                color: MyColors.themeColors[300],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          const AppBadge(text: 'DEFINITION'),
           Text(
             word.definition,
             style: MyTheme().mainTextStyle.copyWith(),
           ),
           SizedBox(height: 15.h),
-          Container(
-            decoration: BoxDecoration(
-              color: MyColors.themeColors[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            margin: EdgeInsets.only(bottom: 4.h),
-            child: Text(
-              'Example',
-              style: TextStyle(
-                color: MyColors.themeColors[300],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          const AppBadge(text: 'EXAMPLE'),
           Text(
             word.example,
             style: MyTheme().mainTextStyle.copyWith(),

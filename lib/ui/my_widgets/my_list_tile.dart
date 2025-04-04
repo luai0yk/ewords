@@ -1,4 +1,5 @@
 import 'package:ewords/models/word_model.dart';
+import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -39,92 +40,89 @@ class MyListTile extends StatelessWidget {
       onTap: onTap,
       child: MyCard(
         margin: const EdgeInsets.only(bottom: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        radius: 22,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Word title with level badges
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Visibility(
-                        visible: isWordDetailVisible,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: MyColors.themeColors[50],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  MyConstants.levelCodes[word.bookId - 1],
-                                  style: TextStyle(
-                                    color: MyColors.themeColors[300],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: MyColors.themeColors[50],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  'U:${word.unitId}',
-                                  style: TextStyle(
-                                    color: MyColors.themeColors[300],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      // Level and Unit badges
+                      if (isWordDetailVisible) ...[
+                        AppBadge(
+                          text: MyConstants.levelCodes[word.bookId - 1],
                         ),
-                      ),
-                      Text(
-                        ' ${word.word.substring(0, 1).toUpperCase() + word.word.substring(1)}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: MyColors.themeColors[300],
-                          fontSize: titleSize.sp,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(width: 8),
+                        AppBadge(
+                          text: 'U:${word.unitId}',
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                      // Word title
+                      Expanded(
+                        child: Text(
+                          word.word.substring(0, 1).toUpperCase() +
+                              word.word.substring(1),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: MyColors.themeColors[300],
+                            fontSize: titleSize.sp,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  Text(
-                    word.definition,
-                    maxLines: textMaxLines != 0 ? textMaxLines : 100,
-                    style: MyTheme().secondaryTextStyle.copyWith(
-                          fontSize: textSize.sp,
-                        ),
-                    overflow: TextOverflow.ellipsis,
+
+                  // Definition
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 4),
+                    child: Text(
+                      word.definition,
+                      maxLines: textMaxLines != 0 ? textMaxLines : 100,
+                      style: MyTheme().secondaryTextStyle.copyWith(
+                            fontSize: textSize.sp,
+                            height: 1.3,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Text(
-                    word.example,
-                    maxLines: subTextMaxLines != 0 ? subTextMaxLines : 10,
-                    style: MyTheme().thirdTextStyle.copyWith(
-                          fontSize: subTextSize.sp,
-                        ),
-                    overflow: TextOverflow.ellipsis,
+
+                  // Example
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      word.example,
+                      maxLines: subTextMaxLines != 0 ? subTextMaxLines : 10,
+                      style: MyTheme().thirdTextStyle.copyWith(
+                            fontSize: subTextSize.sp,
+                            fontStyle: FontStyle.italic,
+                            height: 1.2,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
             ),
-            Visibility(
-              visible: isTrailingVisible,
-              child: Column(
-                children: trailing ?? [],
+
+            // Trailing widgets
+            if (isTrailingVisible && trailing != null && trailing!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: trailing!,
+                ),
               ),
-            ),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/provider/units_provider.dart';
+import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:ewords/ui/my_widgets/app_button.dart';
 import 'package:ewords/ui/my_widgets/my_snackbar.dart';
 import 'package:ewords/ui/my_widgets/stars_rate.dart';
@@ -54,7 +55,12 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     _quizProvider!.unit = widget.unit;
     // Don't automatically load words to show start screen first
     _quizProvider!.cover(true); // Show the covered card initially
+    init();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  void init() async {
+    await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
   }
 
   @override
@@ -107,22 +113,37 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                             style: MyTheme().mainTextStyle,
                           ),
                           const Spacer(),
-                          const SizedBox(height: 20),
                           Stack(
                             alignment: Alignment.centerLeft,
                             children: [
-                              LinearProgressIndicator(
-                                color: MyColors.themeColors[300],
-                                backgroundColor: MyColors.themeColors[50],
-                                value: provider.progress,
-                                minHeight: 20.h,
+                              ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
+                                child: LinearProgressIndicator(
+                                  color: MyColors.themeColors[300],
+                                  backgroundColor: MyColors.themeColors[50],
+                                  value: provider.progress,
+                                  minHeight: 24.h,
+                                ),
                               ),
-                              Text(
-                                ' ${(provider.duration - (provider.progress * provider.duration)).toInt()} / ${provider.duration}',
-                                style: const TextStyle(
-                                  color: Colors.black38,
-                                  fontWeight: FontWeight.bold,
+                              Padding(
+                                padding: EdgeInsets.only(left: 10.w),
+                                child: Row(
+                                  children: [
+                                    HugeIcon(
+                                      icon: HugeIcons.strokeRoundedTime02,
+                                      color: Colors.black38,
+                                      size: 18.sp,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      '${(provider.duration - (provider.progress * provider.duration)).toInt()}s',
+                                      style: TextStyle(
+                                        color: Colors.black38,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13.sp,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -135,49 +156,33 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const SizedBox(width: 5),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: MyColors.themeColors[50],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            '${provider.questionNumber + 1} / 20',
-                            style: TextStyle(
-                              color: MyColors.themeColors[300],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        AppBadge(
+                          icon: HugeIcon(
+                            icon: HugeIcons.strokeRoundedBubbleChatQuestion,
+                            color: MyColors.themeColors[300]!,
+                          ).icon,
+                          text: '${provider.questionNumber + 1} / 20',
                         ),
                         SizedBox(width: 5.h),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green[50],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            'C:${provider.correctCount}',
-                            style: const TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        AppBadge(
+                          backgroundColor: Colors.green[50]!,
+                          textColor: Colors.green,
+                          icon: HugeIcon(
+                            icon: HugeIcons.strokeRoundedCheckmarkCircle02,
+                            color: MyColors.themeColors[300]!,
+                          ).icon,
+                          text: '${provider.correctCount}',
                         ),
                         SizedBox(width: 5.h),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red[50],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            'W:${provider.wrongCount}',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        AppBadge(
+                          backgroundColor: Colors.red[50]!,
+                          textColor: Colors.red,
+                          icon: HugeIcon(
+                            icon:
+                                HugeIcons.strokeRoundedMultiplicationSignCircle,
+                            color: MyColors.themeColors[300]!,
+                          ).icon,
+                          text: '${provider.wrongCount}',
                         ),
                         const Spacer(),
                         IconButton(
