@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdBanner extends StatefulWidget {
-  const AdBanner({Key? key}) : super(key: key);
+  const AdBanner({super.key});
 
   @override
   _AdBannerState createState() => _AdBannerState();

@@ -18,14 +18,14 @@ class AppBadge extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.05),
+        //     blurRadius: 2,
+        //     offset: const Offset(0, 1),
+        //   ),
+        // ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
@@ -39,7 +39,7 @@ class AppBadge extends StatelessWidget {
             ),
           SizedBox(width: 4.w),
           Text(
-            text,
+            text.toUpperCase(),
             style: TextStyle(
               color: textColor,
               fontWeight: FontWeight.bold,

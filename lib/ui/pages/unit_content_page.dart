@@ -14,7 +14,6 @@ import '../../provider/tabbar_icons_visibility_provider.dart';
 import '../../provider/tts_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
-import '../../utils/ads/banner_ad.dart';
 import '../../utils/combine_unit_words.dart';
 import '../../utils/helpers/bottom_sheet_helper.dart';
 import '../../utils/helpers/dialog_helper.dart';
@@ -69,21 +68,6 @@ class _UnitContentPageState extends State<UnitContentPage>
       //Hide the share and speak icons if the current tab is QuizTab
       _tabBarIconsVisibilityProvider!.showHideTabBarIcons(tabController!.index);
     });
-
-    _flutterTts!.setProgressHandler(
-      (text, start, end, word) {
-        if (tabController!.index == 1) {
-          _ttsProvider!.updateCurrentWordStartEnd(start, end);
-        }
-      },
-    );
-
-    _flutterTts!.setCompletionHandler(
-      () {
-        _flutterTts!.stop();
-        _ttsProvider!.stop();
-      },
-    );
   }
 
   @override
@@ -105,8 +89,8 @@ class _UnitContentPageState extends State<UnitContentPage>
     _flutterTts!
         .setLanguage(context.read<SettingsProvider>().speechAccentCode!);
 
-    /*Initialization for FlutterTts which handle text to speak*/
-    /*Save key data once the page is opened*/
+    _ttsProvider!.setCompletionHandler();
+    _ttsProvider!.setProgressHandler();
 
     unit ??= ModalRoute.of(context)!.settings.arguments as UnitModel;
 
@@ -301,7 +285,6 @@ class _UnitContentPageState extends State<UnitContentPage>
               ],
             ),
           ),
-          const AdBanner(), // Add AdBanner widget here
         ],
       ),
     );

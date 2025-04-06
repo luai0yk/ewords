@@ -3,6 +3,7 @@ import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
 import 'package:ewords/utils/ads/reward_ad.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -19,17 +20,12 @@ import 'ui/pages/home_page.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-
   MobileAds.instance.initialize();
-
-  FlutterNativeSplash.preserve(
-    widgetsBinding: widgetsBinding,
-  );
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(
     MultiProvider(
       providers: [
-        // Initialize providers for state management
         ChangeNotifierProvider(create: (context) => DictionaryProvider()),
         ChangeNotifierProvider(create: (context) => FavoriteWordsProvider()),
         ChangeNotifierProvider(create: (context) => SettingsProvider()),
@@ -41,7 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => UnitsProvider()),
         ChangeNotifierProvider(create: (context) => DiamondsProvider()),
       ],
-      child: const MyApp(), // Start the app with MyApp as the root widget
+      child: const MyApp(),
     ),
   );
 }
@@ -72,37 +68,41 @@ class _MyAppState extends State<MyApp> {
   }
 
   void init() async {
-    // Fetch units while the splash screen is displayed
     await Provider.of<UnitsProvider>(context, listen: false).fetchUnits();
     await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
-    // Remove the splash screen after the units are fetched
     FlutterNativeSplash.remove();
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+      ),
+    );
+
     return Provider.value(
       value: _rewardAd,
       child: Consumer<SettingsProvider>(
         builder: (context, provider, child) {
           return ScreenUtilInit(
-            designSize: const Size(
-                360, 690), // Set the design size for responsive layout
-            minTextAdapt:
-                true, // Enable text adaptation for different screen sizes
-            splitScreenMode: true, // Enable split screen mode for large devices
+            designSize: const Size(360, 690),
+            minTextAdapt: true,
+            splitScreenMode: true,
             builder: (context, child) {
               return MaterialApp(
-                theme: MyTheme.lightTheme, // Set the light theme
-                darkTheme: MyTheme.darkTheme, // Set the dark theme
+                theme: MyTheme.lightTheme,
+                darkTheme: MyTheme.darkTheme,
                 themeMode: provider.themeState == 'Light'
-                    ? ThemeMode.light // Use light theme if selected
+                    ? ThemeMode.light
                     : provider.themeState == 'Dark'
-                        ? ThemeMode.dark // Use dark theme if selected
-                        : ThemeMode
-                            .system, // Use system theme if no specific selection
-                debugShowCheckedModeBanner: false, // Hide the debug banner
-                home: const HomePage(), // Set the home page of the app
+                        ? ThemeMode.dark
+                        : ThemeMode.system,
+                debugShowCheckedModeBanner: false,
+                home: const HomePage(),
               );
             },
           );

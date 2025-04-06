@@ -58,9 +58,9 @@ class DownloadTtsAssistantDialog extends StatelessWidget {
             Image.asset('assets/images/download_steps/1.png'),
             Text(
               '3',
-              style: Theme.of(context)
-                  .textTheme
-                  .displaySmall!
+              style: MyTheme()
+                  .mainTextStyle
+                  .copyWith(fontSize: 25.sp)
                   .copyWith(fontSize: 25.sp),
             ),
             Image.asset('assets/images/download_steps/2.png'),

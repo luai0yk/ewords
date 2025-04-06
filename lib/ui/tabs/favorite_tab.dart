@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/favorite_word_model.dart';
 import '../../provider/favorite_words_provider.dart';
+import '../../provider/settings_provider.dart';
 import '../../provider/tts_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
@@ -26,21 +27,32 @@ class FavoriteTab extends StatefulWidget {
 }
 
 class _FavoriteTabState extends State<FavoriteTab> {
-  FlutterTts? flutterTts;
-  TTSProvider? ttsProvider;
+  FlutterTts? _flutterTts;
+  TTSProvider? _ttsProvider;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    flutterTts = TTS.instance;
+    _flutterTts = TTS.instance;
 
-    ttsProvider = context.read<TTSProvider>();
+    _ttsProvider = context.read<TTSProvider>();
+
+    /*The speech rate or speed
+    * its value comes from the settings page (Slider's value)*/
+    _flutterTts!.setSpeechRate(context.read<SettingsProvider>().speechRate!);
+
+    /*The speech language or accent
+    * its value comes from the settings page (Accent's ListTile>>RadioListTile)*/
+    _flutterTts!
+        .setLanguage(context.read<SettingsProvider>().speechAccentCode!);
+
+    _ttsProvider!.setCompletionHandler();
   }
 
   @override
   void dispose() {
-    flutterTts!.stop();
-    ttsProvider!.stop(listen: false);
+    _flutterTts!.stop();
+    _ttsProvider!.stop(listen: false);
     super.dispose();
   }
 
@@ -134,13 +146,13 @@ class _FavoriteTabState extends State<FavoriteTab> {
                           return IconButton(
                             onPressed: () async {
                               if (currentPlayingWordID == favorite.id) {
-                                flutterTts!.stop();
-                                ttsProvider!.stop();
+                                _flutterTts!.stop();
+                                _ttsProvider!.stop();
                               } else {
-                                flutterTts!.speak(
+                                _flutterTts!.speak(
                                   '${favorite.word}\n${favorite.definition}\nexample\n${favorite.example}',
                                 );
-                                ttsProvider!
+                                _ttsProvider!
                                     .play(currentPlayingWordID: favorite.id);
                               }
                             },

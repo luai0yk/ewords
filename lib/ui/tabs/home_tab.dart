@@ -4,6 +4,7 @@ import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
 import 'package:ewords/theme/my_colors.dart';
 import 'package:ewords/theme/my_theme.dart';
+import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:ewords/ui/my_widgets/stars_rate.dart';
 import 'package:ewords/ui/pages/unit_content_page.dart';
 import 'package:ewords/utils/ads/reward_ad.dart';
@@ -92,21 +93,9 @@ class _HomeTabState extends State<HomeTab> {
                               ),
                           children: [
                             WidgetSpan(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: MyColors.themeColors[50],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  MyConstants.levelCodes[
-                                      provider.units![index].bookId - 1],
-                                  style: TextStyle(
-                                    color: MyColors.themeColors[300],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                              child: AppBadge(
+                                text: MyConstants.levelCodes[
+                                    provider.units![index].bookId - 1],
                               ),
                             ),
                             TextSpan(

@@ -25,31 +25,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  PageController? pageController; // Controller for the PageView
-  final ScrollController scrollController =
-      ScrollController(); // Controller for scrolling
-  SharedPreferences? prefs; // Instance of SharedPreferences
+  PageController? pageController;
+  final ScrollController scrollController = ScrollController();
+  SharedPreferences? prefs;
   List<Widget>? pages;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize the list of pages
     pages = [
-      // BookListPage(scrollController: scrollController),
       const HomeTab(),
       FavoriteTab(scrollController: scrollController),
       ScoresTab(scrollController: scrollController),
       const SettingsPage(),
     ];
-    pageController = PageController(); // Initialize PageController
-    init(); // Call init function to load preferences
-  }
-
-  // Initialize SharedPreferences
-  init() async {
-    prefs = await SharedPreferences.getInstance();
+    pageController = PageController();
+    init();
   }
 
   @override
@@ -57,6 +49,10 @@ class _HomePageState extends State<HomePage> {
     pageController?.dispose();
     scrollController.dispose();
     super.dispose();
+  }
+
+  init() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   @override

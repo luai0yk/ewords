@@ -72,10 +72,12 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused && !(_quizProvider!.isPaused)) {
+    if (state == AppLifecycleState.paused &&
+        !(_quizProvider!.isPaused) &&
+        !(_quizProvider!.isQuizCompleted.value) &&
+        _quizProvider!.questionNumber > 0) {
       context.read<QuizProvider>().isPaused = true;
-      _quizProvider!
-          .cover(true, pause: true); // Cover the quiz when app is paused
+      _quizProvider!.cover(true, pause: true);
     }
   }
 
@@ -403,7 +405,9 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
           ),
         SizedBox(height: 30.h),
         AppButton(
-          text: 'Start Quiz',
+          text: _unitsProvider!.score == 0 || _unitsProvider!.score == null
+              ? 'Start Quiz'
+              : 'Retake Quiz',
           onPressed: () {
             _quizProvider!.loadWords(widget.unit);
             provider.cover(false);

@@ -1,4 +1,5 @@
 import 'package:ewords/models/quiz_score_model.dart';
+import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,34 +24,12 @@ class QuizScoreCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: MyColors.themeColors[50],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  MyConstants.levelCodes[quizScore.bookId - 1],
-                  style: TextStyle(
-                    color: MyColors.themeColors[300],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              AppBadge(
+                text: MyConstants.levelCodes[quizScore.bookId - 1],
               ),
               const SizedBox(width: 5),
-              Container(
-                decoration: BoxDecoration(
-                  color: MyColors.themeColors[50],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  'U:${quizScore.unitId}',
-                  style: TextStyle(
-                    color: MyColors.themeColors[300],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              AppBadge(
+                text: 'U:${quizScore.unitId}',
               ),
             ],
           ),

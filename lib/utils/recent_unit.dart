@@ -32,6 +32,9 @@ class RecentUnit {
     required int index,
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(MyConstants.LAST_UNIT_INDEX, index);
+    int? lastIndex = prefs.getInt(MyConstants.LAST_UNIT_INDEX) ?? 0;
+    if (index > lastIndex || lastIndex == 0) {
+      await prefs.setInt(MyConstants.LAST_UNIT_INDEX, index);
+    }
   }
 }

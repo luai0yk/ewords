@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/tts.dart';
+
 class TTSProvider extends ChangeNotifier {
   Map<String, int> _currentWordStartEnd =
       {}; // Start and end positions for the current word
@@ -14,7 +16,7 @@ class TTSProvider extends ChangeNotifier {
   }
 
   bool isPlaying = false;
-   int currentPlayingWordID = -1;
+  int currentPlayingWordID = -1;
 
   void play({bool listen = true, int currentPlayingWordID = -1}) {
     this.currentPlayingWordID = currentPlayingWordID;
@@ -36,5 +38,20 @@ class TTSProvider extends ChangeNotifier {
     if (listen) {
       notifyListeners();
     }
+  }
+
+  void setCompletionHandler() {
+    TTS.instance.setCompletionHandler(() {
+      TTS.instance.stop();
+      stop();
+    });
+  }
+
+  void setProgressHandler() {
+    TTS.instance.setProgressHandler(
+      (text, start, end, word) {
+        updateCurrentWordStartEnd(start, end);
+      },
+    );
   }
 }
