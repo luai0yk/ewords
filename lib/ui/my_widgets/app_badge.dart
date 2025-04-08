@@ -19,16 +19,11 @@ class AppBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.05),
-        //     blurRadius: 2,
-        //     offset: const Offset(0, 1),
-        //   ),
-        // ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null)
@@ -39,6 +34,7 @@ class AppBadge extends StatelessWidget {
             ),
           SizedBox(width: 4.w),
           Text(
+            textAlign: TextAlign.center,
             text.toUpperCase(),
             style: TextStyle(
               color: textColor,

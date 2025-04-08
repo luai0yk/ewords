@@ -44,6 +44,7 @@ class TTSProvider extends ChangeNotifier {
     TTS.instance.setCompletionHandler(() {
       TTS.instance.stop();
       stop();
+      updateCurrentWordStartEnd(0, 0);
     });
   }
 

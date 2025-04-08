@@ -43,7 +43,8 @@ class MyListTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         radius: 22,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: Column(
@@ -60,7 +61,7 @@ class MyListTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         AppBadge(
-                          text: 'U:${word.unitId}',
+                          text: 'U${word.unitId}',
                         ),
                         const SizedBox(width: 10),
                       ],
@@ -120,6 +121,7 @@ class MyListTile extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: trailing!,
                 ),
               ),

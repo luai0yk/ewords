@@ -8,7 +8,7 @@ class CombineUnitWords {
     /*Combine all the unit words in one string in order to speak them*/
     for (var element in words) {
       combinedWords +=
-          "${element.word}\n${element.definition}\nExample: ${element.example}\n\n";
+          "${element.word.substring(0, 1).toUpperCase() + element.word.substring(1)}\n${element.definition}\nExample: ${element.example}\n\n";
     }
 
     return combinedWords;

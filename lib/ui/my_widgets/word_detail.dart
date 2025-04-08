@@ -31,7 +31,7 @@ class WordDetail extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 AppBadge(
-                  text: 'Unit:${word.unitId}',
+                  text: 'Unit${word.unitId}',
                 ),
               ],
             ),

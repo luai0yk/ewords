@@ -3,6 +3,7 @@ import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../theme/my_colors.dart';
 
@@ -29,7 +30,7 @@ class QuizScoreCard extends StatelessWidget {
               ),
               const SizedBox(width: 5),
               AppBadge(
-                text: 'U:${quizScore.unitId}',
+                text: 'U${quizScore.unitId}',
               ),
             ],
           ),
@@ -37,21 +38,43 @@ class QuizScoreCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Stack(
-                  alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LinearProgressIndicator(
-                      color: Colors.green[300],
-                      backgroundColor: Colors.green[50],
-                      value: quizScore.correctAnswers / 20,
-                      minHeight: 15.h,
-                      borderRadius: BorderRadius.circular(15),
+                    Row(
+                      children: [
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedCheckmarkCircle01,
+                          size: 15.sp,
+                          color: Colors.green,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Correct: ${quizScore.correctAnswers}',
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '  Correct ${quizScore.correctAnswers}',
-                      style: const TextStyle(
-                        color: Colors.black38,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(height: 6.h),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutCubic,
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: quizScore.correctAnswers / 20,
+                        ),
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          backgroundColor: Colors.green[50],
+                          color: Colors.green[400],
+                          minHeight: 22.h,
+                        ),
                       ),
                     ),
                   ],
@@ -59,21 +82,43 @@ class QuizScoreCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Stack(
-                  alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LinearProgressIndicator(
-                      color: Colors.red[300],
-                      backgroundColor: Colors.red[50],
-                      value: quizScore.wrongAnswers / 20,
-                      minHeight: 15.h,
-                      borderRadius: BorderRadius.circular(15),
+                    Row(
+                      children: [
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedMultiplicationSignCircle,
+                          size: 15.sp,
+                          color: Colors.red,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Wrong: ${quizScore.wrongAnswers}',
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '  Wrong ${quizScore.wrongAnswers}',
-                      style: const TextStyle(
-                        color: Colors.black38,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(height: 6.h),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutCubic,
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: quizScore.wrongAnswers / 20,
+                        ),
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          backgroundColor: Colors.red[50],
+                          color: Colors.red[400],
+                          minHeight: 22.h,
+                        ),
                       ),
                     ),
                   ],
@@ -81,22 +126,37 @@ class QuizScoreCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 16.h),
           Stack(
             alignment: Alignment.centerLeft,
             children: [
-              LinearProgressIndicator(
-                color: MyColors.themeColors[300],
-                backgroundColor: MyColors.themeColors[50],
-                value: quizScore.totalScore / 100,
-                minHeight: 15.h,
-                borderRadius: BorderRadius.circular(15),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween<double>(
+                    begin: 0,
+                    end: quizScore.totalScore / 100,
+                  ),
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, _) => LinearProgressIndicator(
+                    color: MyColors.themeColors[400],
+                    backgroundColor: MyColors.themeColors[50],
+                    value: value,
+                    minHeight: 22.h,
+                  ),
+                ),
               ),
-              Text(
-                '  Score ${quizScore.totalScore.toInt()}%',
-                style: const TextStyle(
-                  color: Colors.black38,
-                  fontWeight: FontWeight.bold,
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Text(
+                  'Score ${quizScore.totalScore.toInt()}%',
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.sp,
+                  ),
                 ),
               ),
             ],

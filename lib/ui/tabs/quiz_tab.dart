@@ -75,8 +75,8 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused &&
         !(_quizProvider!.isPaused) &&
         !(_quizProvider!.isQuizCompleted.value) &&
-        _quizProvider!.questionNumber > 0) {
-      context.read<QuizProvider>().isPaused = true;
+        _quizProvider!.questionNumber >= 0 &&
+        _quizProvider!.isQuizStarted) {
       _quizProvider!.cover(true, pause: true);
     }
   }
@@ -119,12 +119,21 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                             alignment: Alignment.centerLeft,
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: LinearProgressIndicator(
-                                  color: MyColors.themeColors[300],
-                                  backgroundColor: MyColors.themeColors[50],
-                                  value: provider.progress,
-                                  minHeight: 24.h,
+                                borderRadius: BorderRadius.circular(20),
+                                child: TweenAnimationBuilder<double>(
+                                  tween: Tween<double>(
+                                    begin: 0,
+                                    end: provider.progress,
+                                  ),
+                                  duration: const Duration(milliseconds: 400),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, value, _) =>
+                                      LinearProgressIndicator(
+                                    color: MyColors.themeColors[400],
+                                    backgroundColor: MyColors.themeColors[50],
+                                    value: value,
+                                    minHeight: 24.h,
+                                  ),
                                 ),
                               ),
                               Padding(
@@ -318,6 +327,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                                   context
                                       .read<DiamondsProvider>()
                                       .updateDiamonds(
+                                        previousScore: _unitsProvider!.score,
                                         correctAnswers: provider.correctCount,
                                       );
                                 }

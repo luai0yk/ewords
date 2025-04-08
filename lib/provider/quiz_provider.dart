@@ -216,8 +216,9 @@ class QuizProvider extends ChangeNotifier {
     );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    int currentActiveUnit = prefs.getInt('current_active_unit') ?? 1;
 
-    if (score.totalScore >= 50) {
+    if (score.totalScore >= 50 && score.id >= currentActiveUnit) {
       await prefs.setInt(
         'current_active_unit',
         (score.id + 1),
@@ -240,10 +241,12 @@ class QuizProvider extends ChangeNotifier {
       bookId: bookId,
       unitId: unitId,
     );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int currentActiveUnit = prefs.getInt('current_active_unit') ?? 1;
 
     if (isPassed) {
       _passedUnitIds.add(id);
-      _passedUnitIds.add(id <= 179 ? (id + 1) : 0);
+      _passedUnitIds.add(id <= 179 && id >= currentActiveUnit ? (id + 1) : 0);
     } else {
       _passedUnitIds.remove(id);
     }

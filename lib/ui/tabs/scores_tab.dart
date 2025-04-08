@@ -72,6 +72,7 @@ class _ScoresTabState extends State<ScoresTab> {
             itemCount: snapshot.data!.length,
             padding: const EdgeInsets.all(10),
             itemBuilder: (context, index) {
+              print('score count = ${snapshot.data!.length}');
               QuizScoreModel quizScore = snapshot.data![index];
               return QuizScoreCard(quizScore: quizScore);
             },
