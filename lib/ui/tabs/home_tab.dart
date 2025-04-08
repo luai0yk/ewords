@@ -56,6 +56,10 @@ class _HomeTabState extends State<HomeTab> {
     _diamondsProvider!.loadDiamonds();
   }
 
+  void init() async {
+    await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
+  }
+
   @override
   Widget build(BuildContext context) {
     MyTheme.initialize(context);
@@ -215,6 +219,7 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                       ).then(
                         (value) {
+                          init();
                           _quizProvider!.init();
                         },
                       );

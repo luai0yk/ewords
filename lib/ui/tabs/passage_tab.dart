@@ -17,6 +17,9 @@ class PassageTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.select(
+      (value) {},
+    );
     return Scaffold(
         body: SingleChildScrollView(
       controller: scrollController,

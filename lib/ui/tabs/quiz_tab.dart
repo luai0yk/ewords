@@ -125,7 +125,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                                     begin: 0,
                                     end: provider.progress,
                                   ),
-                                  duration: const Duration(milliseconds: 400),
+                                  duration: const Duration(milliseconds: 200),
                                   curve: Curves.easeOutCubic,
                                   builder: (context, value, _) =>
                                       LinearProgressIndicator(

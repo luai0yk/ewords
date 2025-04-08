@@ -46,6 +46,7 @@ class QuizProvider extends ChangeNotifier {
   void init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _currentActiveUnit = prefs.getInt('current_active_unit') ?? 1;
+    notifyListeners();
   }
 
   set setProgress(double val) => _progress = val;
@@ -104,6 +105,7 @@ class QuizProvider extends ChangeNotifier {
 
     // Set the new unit and load its words
     this.unit = unit;
+    print('unit id ${unit.id}');
 
     if (unit.words.isNotEmpty) {
       _listWords = unit.words;
@@ -175,7 +177,7 @@ class QuizProvider extends ChangeNotifier {
     }
     notifyListeners();
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       _moveToNextQuestion(unit);
     });
   }
@@ -187,6 +189,7 @@ class QuizProvider extends ChangeNotifier {
     } else {
       isQuizCompleted.value = true;
       _isCovered = true;
+
       insertOrUpdateQuizScore(
         score: QuizScoreModel(
           id: unit.id,

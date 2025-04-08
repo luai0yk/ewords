@@ -63,7 +63,7 @@ class QuizScoreCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeOutCubic,
                         tween: Tween<double>(
                           begin: 0,
@@ -107,7 +107,7 @@ class QuizScoreCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeOutCubic,
                         tween: Tween<double>(
                           begin: 0,
@@ -137,7 +137,7 @@ class QuizScoreCard extends StatelessWidget {
                     begin: 0,
                     end: quizScore.totalScore / 100,
                   ),
-                  duration: const Duration(milliseconds: 400),
+                  duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOutCubic,
                   builder: (context, value, _) => LinearProgressIndicator(
                     color: MyColors.themeColors[400],
