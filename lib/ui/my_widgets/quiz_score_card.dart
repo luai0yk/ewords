@@ -38,28 +38,9 @@ class QuizScoreCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Row(
-                      children: [
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedCheckmarkCircle01,
-                          size: 15.sp,
-                          color: Colors.green,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          'Correct: ${quizScore.correctAnswers}',
-                          style: TextStyle(
-                            color: Colors.green[700],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: TweenAnimationBuilder<double>(
@@ -77,33 +58,34 @@ class QuizScoreCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedCheckmarkCircle01,
+                          size: 15.sp,
+                          color: Colors.black38,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'CORRECT: ${quizScore.correctAnswers}',
+                          style: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Row(
-                      children: [
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedMultiplicationSignCircle,
-                          size: 15.sp,
-                          color: Colors.red,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          'Wrong: ${quizScore.wrongAnswers}',
-                          style: TextStyle(
-                            color: Colors.red[700],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: TweenAnimationBuilder<double>(
@@ -120,6 +102,26 @@ class QuizScoreCard extends StatelessWidget {
                           minHeight: 22.h,
                         ),
                       ),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedMultiplicationSignCircle,
+                          size: 15.sp,
+                          color: Colors.black38,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'WRONG: ${quizScore.wrongAnswers}',
+                          style: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -151,11 +153,11 @@ class QuizScoreCard extends StatelessWidget {
                 width: double.infinity,
                 alignment: Alignment.center,
                 child: Text(
-                  'Score ${quizScore.totalScore.toInt()}%',
+                  'SCORE ${quizScore.totalScore.toInt()}%',
                   style: TextStyle(
                     color: Colors.black54,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12.sp,
+                    fontSize: 10.sp,
                   ),
                 ),
               ),

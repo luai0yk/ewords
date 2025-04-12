@@ -85,7 +85,8 @@ class _HomeTabState extends State<HomeTab> {
                   bottom: MediaQuery.of(context).size.width * 0.10,
                 ),
                 reverse: true,
-                itemCount: provider.units!.length,
+                itemCount:
+                    (provider.units!.length + provider.units!.length ~/ 30),
                 itemBuilder: (context, index) {
                   if (index == 0 || (index % 31 == 0)) {
                     return MyCard(
@@ -192,7 +193,7 @@ class _HomeTabState extends State<HomeTab> {
         bool isPassed = passedUnits['is_passed'];
         int currentActiveUnit = passedUnits['current_active_unit'];
         QuizScoreModel? score;
-        //
+
         if (isPassed && index < scores.length) {
           score = scores[index];
         }
@@ -226,8 +227,8 @@ class _HomeTabState extends State<HomeTab> {
                     } else {
                       SnackBarHelper.show(
                         context: context,
-                        widget:
-                            MySnackBar.create(content: 'This unit is locked'),
+                        widget: MySnackBar.create(
+                            content: 'This unit is locked ${index}'),
                       );
                     }
                   },
