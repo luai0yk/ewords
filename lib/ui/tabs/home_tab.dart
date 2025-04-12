@@ -228,7 +228,7 @@ class _HomeTabState extends State<HomeTab> {
                       SnackBarHelper.show(
                         context: context,
                         widget: MySnackBar.create(
-                            content: 'This unit is locked ${index}'),
+                            content: 'This unit is locked $index'),
                       );
                     }
                   },

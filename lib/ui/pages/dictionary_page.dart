@@ -1,12 +1,19 @@
+import 'package:ewords/models/word_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
+import '../../db/favorite_word_helper.dart';
+import '../../models/favorite_word_model.dart';
 import '../../provider/dictionary_provider.dart';
+import '../../provider/favorite_words_provider.dart';
+import '../../provider/tts_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../../utils/helpers/dialog_helper.dart';
+import '../../utils/tts.dart';
 import '../dialogs/app_dialog.dart';
 import '../my_widgets/my_list_tile.dart';
 import '../my_widgets/word_detail.dart';
@@ -19,31 +26,37 @@ class DictionaryPage extends StatefulWidget {
 }
 
 class _DictionaryPageState extends State<DictionaryPage> {
-  late final TextEditingController _controller; // Controller for search input
-  DictionaryProvider? dictionaryProvider;
+  late final TextEditingController _textEditingController;
+  DictionaryProvider? _dictionaryProvider;
+  FlutterTts? _flutterTts;
+
+  TTSProvider? _ttsProvider;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(); // Initialize controller
+    _textEditingController = TextEditingController();
+    _flutterTts = TTS.instance;
 
-    // Listener to handle search input changes (commented out for now)
-    _controller.addListener(() {
-      context.read<DictionaryProvider>().search(_controller.text);
+    _textEditingController.addListener(() {
+      context.read<DictionaryProvider>().search(_textEditingController.text);
     });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    dictionaryProvider = context.read<DictionaryProvider>();
+    _ttsProvider = context.read<TTSProvider>();
+    _dictionaryProvider = context.read<DictionaryProvider>();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    dictionaryProvider!.close();
+    _textEditingController.dispose();
+    _dictionaryProvider!.close();
+    _flutterTts!.stop();
+
+    _ttsProvider!.stop(listen: false);
     super.dispose();
   }
 
@@ -86,7 +99,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                     cursorColor: MyColors.themeColors[100],
                     cursorWidth: 3,
                     style: MyTheme().mainTextStyle,
-                    controller: _controller,
+                    controller: _textEditingController,
                     cursorRadius: const Radius.circular(10),
                     // controller: _controller, // Uncomment to use the search functionality
                     decoration: InputDecoration(
@@ -138,6 +151,8 @@ class _DictionaryPageState extends State<DictionaryPage> {
                           itemCount: provider.wordList.length,
                           // Number of words
                           itemBuilder: (context, index) {
+                            WordModel word = provider.wordList[index];
+
                             return Padding(
                               padding:
                                   EdgeInsets.only(left: 10.sp, right: 10.sp),
@@ -149,7 +164,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                                         secondaryAnimation) {
                                       return AppDialog(
                                         customContent: WordDetail(
-                                          word: provider.wordList[index],
+                                          word: word,
                                         ),
                                         cancelText: 'Hide',
                                         onCancel: () => null,
@@ -157,7 +172,83 @@ class _DictionaryPageState extends State<DictionaryPage> {
                                     },
                                   );
                                 },
-                                word: provider.wordList[index],
+                                trailing: [
+                                  Selector<TTSProvider, int>(
+                                    selector: (context, provider) =>
+                                        provider.currentPlayingWordID,
+                                    builder:
+                                        (context, currentPlayingWordID, child) {
+                                      return IconButton(
+                                        onPressed: () async {
+                                          if (currentPlayingWordID == word.id) {
+                                            _flutterTts!.stop();
+                                            _ttsProvider!.stop();
+                                          } else {
+                                            _flutterTts!.speak(
+                                              '${word.word}\n${word.definition}\nexample\n${word.example}',
+                                            );
+                                            _ttsProvider!.play(
+                                                currentPlayingWordID: word.id);
+                                          }
+                                        },
+                                        tooltip: currentPlayingWordID == word.id
+                                            ? 'Stop'
+                                            : 'Speak',
+                                        icon: HugeIcon(
+                                          icon: currentPlayingWordID == word.id
+                                              ? HugeIcons.strokeRoundedStop
+                                              : HugeIcons
+                                                  .strokeRoundedMegaphone02,
+                                          color: MyColors.themeColors[300]!,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  // Favorite icon button
+                                  Selector<FavoriteWordsProvider, bool>(
+                                    selector: (context, provider) =>
+                                        provider.isFavorite(word.id),
+                                    builder: (context, isFavorite, child) {
+                                      return IconButton(
+                                        onPressed: () async {
+                                          if (isFavorite) {
+                                            await FavoriteWordHelper.instance
+                                                .deleteFavorite(word.id);
+                                          } else {
+                                            await FavoriteWordHelper.instance
+                                                .addFavorite(
+                                              FavoriteWordModel(
+                                                id: word.id,
+                                                unitId: word.unitId,
+                                                bookId: word.bookId,
+                                                word: word.word,
+                                                definition: word.definition,
+                                                example: word.example,
+                                              ),
+                                            );
+                                          }
+                                          context
+                                              .read<FavoriteWordsProvider>()
+                                              .checkFavorites(word.id);
+                                        },
+                                        tooltip: isFavorite
+                                            ? 'Remove from favorites'
+                                            : 'Add to favorites',
+                                        icon: HugeIcon(
+                                          icon: isFavorite
+                                              ? HugeIcons
+                                                  .strokeRoundedHeartCheck
+                                              : HugeIcons
+                                                  .strokeRoundedFavourite,
+                                          color: MyColors.themeColors[300]!,
+                                        ),
+                                        color: MyColors.themeColors[300],
+                                      );
+                                    },
+                                  ),
+                                ],
+                                isTrailingVisible: true,
+                                word: word,
                                 isWordDetailVisible: true,
                               ),
                             );
