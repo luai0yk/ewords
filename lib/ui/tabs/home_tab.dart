@@ -1,3 +1,4 @@
+import 'package:anchor_scroll_controller/anchor_scroll_controller.dart';
 import 'package:ewords/models/quiz_score_model.dart';
 import 'package:ewords/models/unit_model.dart';
 import 'package:ewords/provider/quiz_provider.dart';
@@ -31,14 +32,18 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   DiamondsProvider? _diamondsProvider;
   QuizProvider? _quizProvider;
+  int currentActiveUnit = 0;
 
   final ScrollController _scrollController = ScrollController();
 
   final Map<int, GlobalKey> _unitKeys = {};
 
+  late final AnchorScrollController _scrollAnchorController;
+
   @override
   void initState() {
     super.initState();
+    _scrollAnchorController = AnchorScrollController();
   }
 
   @override
@@ -57,15 +62,22 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: MyColors.themeColors[300],
-        child: const HugeIcon(
-            icon: HugeIcons.strokeRoundedArrowUp01, color: Colors.white),
-        onPressed: () {
-          _scrollToActiveUnit(
-            context.read<UnitsProvider>().units ?? [],
-          );
-        },
+      floatingActionButton: SizedBox(
+        width: 40.r,
+        height: 40.r,
+        child: FloatingActionButton(
+          backgroundColor: MyColors.themeColors[300],
+          elevation: 1,
+          child: const HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowUp01, color: Colors.white),
+          onPressed: () {
+            _scrollAnchorController.scrollToIndex(
+              index: currentActiveUnit - 1,
+              scrollSpeed: 50,
+              curve: Curves.linear,
+            );
+          },
+        ),
       ),
       body: Stack(
         children: [
@@ -78,7 +90,7 @@ class _HomeTabState extends State<HomeTab> {
               }
               return ListView.builder(
                 key: const PageStorageKey<String>('units'),
-                controller: _scrollController,
+                controller: _scrollAnchorController,
                 padding: EdgeInsets.only(
                   right: MediaQuery.of(context).size.width * 0.22,
                   left: MediaQuery.of(context).size.width * 0.22,
@@ -117,10 +129,14 @@ class _HomeTabState extends State<HomeTab> {
                   } else {
                     final itemIndex = index - ((index ~/ 31) + 1);
 
-                    return _buildListItem(
-                      itemIndex,
-                      provider.units ?? [],
-                      provider.scores ?? [],
+                    return AnchorItemWrapper(
+                      index: itemIndex,
+                      controller: _scrollAnchorController,
+                      child: _buildListItem(
+                        itemIndex,
+                        provider.units ?? [],
+                        provider.scores ?? [],
+                      ),
                     );
                   }
                 },
@@ -142,40 +158,6 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  void _scrollToActiveUnit(List<UnitModel> units) {
-    final QuizProvider quizProvider = context.read<QuizProvider>();
-    // Find the active unit index in the ListView
-    int activeUnitIndex = -1;
-    int activeUnitId = -1;
-
-    for (int i = 0; i < units.length; i++) {
-      final UnitModel unit = units[i];
-      final unitStatus = quizProvider.getUnitStatus(unit.id);
-      if (unit.id == unitStatus['current_active_unit']) {
-        activeUnitId = unit.id;
-        // Calculate the actual index in the ListView (accounting for header items)
-        activeUnitIndex = i;
-        break;
-      }
-    }
-
-    if (activeUnitIndex >= 0) {
-      // Schedule a post-frame callback to ensure the keys are properly initialized
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final GlobalKey? key = _unitKeys[activeUnitId];
-        if (key != null && key.currentContext != null) {
-          // Get the render object and calculate its position
-          Scrollable.ensureVisible(
-            key.currentContext!,
-            alignment: 0.5, // Center the item
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        }
-      });
-    }
-  }
-
   Widget _buildListItem(
       int index, List<UnitModel> units, List<QuizScoreModel> scores) {
     Color? unPassedUnitColor = Theme.of(context).brightness == Brightness.light
@@ -194,7 +176,7 @@ class _HomeTabState extends State<HomeTab> {
     return Selector<QuizProvider, Map<String, dynamic>>(
       builder: (context, passedUnits, child) {
         bool isPassed = passedUnits['is_passed'];
-        int currentActiveUnit = passedUnits['current_active_unit'];
+        currentActiveUnit = passedUnits['current_active_unit'];
         QuizScoreModel? score;
 
         if (isPassed && index < scores.length) {
