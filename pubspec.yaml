@@ -43,6 +43,7 @@ dependencies:
   flutter_native_splash: ^2.4.4
   hugeicons: ^0.0.7
   google_mobile_ads: ^5.3.1
+  scrollable_positioned_list: ^0.3.8
   flutter:
     sdk: flutter
 

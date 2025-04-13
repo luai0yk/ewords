@@ -12,6 +12,7 @@ import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hidable/hidable.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/diamonds_provider.dart';
@@ -32,19 +33,12 @@ class _HomeTabState extends State<HomeTab> {
   QuizProvider? _quizProvider;
 
   final ScrollController _scrollController = ScrollController();
+
   final Map<int, GlobalKey> _unitKeys = {};
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted &&
-          context.read<UnitsProvider>().units != null &&
-          context.read<UnitsProvider>().scores != null) {
-        _scrollToActiveUnit(context.read<UnitsProvider>().units!);
-      }
-    });
   }
 
   @override
@@ -62,9 +56,17 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    MyTheme.initialize(context);
-
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: MyColors.themeColors[300],
+        child: const HugeIcon(
+            icon: HugeIcons.strokeRoundedArrowUp01, color: Colors.white),
+        onPressed: () {
+          _scrollToActiveUnit(
+            context.read<UnitsProvider>().units ?? [],
+          );
+        },
+      ),
       body: Stack(
         children: [
           Consumer<UnitsProvider>(
@@ -74,7 +76,6 @@ class _HomeTabState extends State<HomeTab> {
                   child: CircularProgressIndicator(strokeWidth: 10),
                 );
               }
-
               return ListView.builder(
                 key: const PageStorageKey<String>('units'),
                 controller: _scrollController,
@@ -88,6 +89,8 @@ class _HomeTabState extends State<HomeTab> {
                 itemCount:
                     (provider.units!.length + provider.units!.length ~/ 30),
                 itemBuilder: (context, index) {
+                  MyTheme.initialize(context);
+
                   if (index == 0 || (index % 31 == 0)) {
                     return MyCard(
                       child: RichText(
@@ -148,7 +151,7 @@ class _HomeTabState extends State<HomeTab> {
     for (int i = 0; i < units.length; i++) {
       final UnitModel unit = units[i];
       final unitStatus = quizProvider.getUnitStatus(unit.id);
-      if (unitStatus['current_active_unit'] == unit.id) {
+      if (unit.id == unitStatus['current_active_unit']) {
         activeUnitId = unit.id;
         // Calculate the actual index in the ListView (accounting for header items)
         activeUnitIndex = i;
@@ -289,9 +292,3 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 }
-
-// @override
-// void dispose() {
-//  // _scrollController.dispose();
-//   super.dispose();
-// }
