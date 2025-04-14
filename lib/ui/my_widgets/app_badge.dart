@@ -32,7 +32,7 @@ class AppBadge extends StatelessWidget {
               color: textColor,
               size: 14.sp,
             ),
-          SizedBox(width: 4.w),
+          if (icon != null) SizedBox(width: 4.w),
           Text(
             textAlign: TextAlign.center,
             text.toUpperCase(),

@@ -22,11 +22,23 @@ class QuizScoreHelper extends DBHelper {
 
   Future<int> updateQuizScore(int id, int correctAnswers) async {
     Database? db = await database;
-    return await db!.update(
-      QUIZ_TABLE_NAME,
-      {'correct_answers': correctAnswers},
-      where: 'id = ? AND correct_answers < ?',
-      whereArgs: [id, correctAnswers],
+    // return await db!.update(
+    //   QUIZ_TABLE_NAME,
+    //   {
+    //     'correct_answers': correctAnswers,
+    //     'updated_at': 'CURRENT_TIMESTAMP',
+    //   },
+    //   where: 'id = ? AND correct_answers < ?',
+    //   whereArgs: [id, correctAnswers],
+    // );
+
+    return await db!.rawUpdate(
+      '''
+        UPDATE QuizScores
+        SET correct_answers = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      ''',
+      [correctAnswers, id], // Update the score of the quiz with id 1
     );
   }
 
@@ -52,7 +64,8 @@ class QuizScoreHelper extends DBHelper {
 
   Future<List<QuizScoreModel>> getQuizScores() async {
     Database? db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(QUIZ_TABLE_NAME);
+    final List<Map<String, dynamic>> maps =
+        await db!.query(QUIZ_TABLE_NAME, orderBy: 'id DESC');
 
     return List.generate(
       maps.length,

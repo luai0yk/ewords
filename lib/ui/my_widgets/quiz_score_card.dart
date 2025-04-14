@@ -1,9 +1,11 @@
 import 'package:ewords/models/quiz_score_model.dart';
+import 'package:ewords/theme/my_theme.dart';
 import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 
 import '../../theme/my_colors.dart';
 
@@ -14,8 +16,8 @@ class QuizScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.sp),
-      margin: EdgeInsets.only(bottom: 8.sp),
+      padding: EdgeInsets.all(10.sp),
+      margin: EdgeInsets.only(bottom: 10.sp),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onSurface,
         borderRadius: BorderRadius.circular(15),
@@ -24,6 +26,8 @@ class QuizScoreCard extends StatelessWidget {
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AppBadge(
                 text: MyConstants.levelCodes[quizScore.bookId - 1],
@@ -31,6 +35,13 @@ class QuizScoreCard extends StatelessWidget {
               const SizedBox(width: 5),
               AppBadge(
                 text: 'U${quizScore.unitId}',
+              ),
+              const Spacer(),
+              Text(
+                DateFormat('yy-MM-dd').format(
+                  DateTime.parse(quizScore.updatedAt!),
+                ),
+                style: MyTheme().secondaryTextStyle,
               ),
             ],
           ),

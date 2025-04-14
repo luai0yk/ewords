@@ -34,10 +34,6 @@ class _HomeTabState extends State<HomeTab> {
   QuizProvider? _quizProvider;
   int currentActiveUnit = 0;
 
-  final ScrollController _scrollController = ScrollController();
-
-  final Map<int, GlobalKey> _unitKeys = {};
-
   late final AnchorScrollController _scrollAnchorController;
 
   @override
@@ -68,8 +64,6 @@ class _HomeTabState extends State<HomeTab> {
         child: FloatingActionButton(
           backgroundColor: MyColors.themeColors[300],
           elevation: 1,
-          child: const HugeIcon(
-              icon: HugeIcons.strokeRoundedArrowUp01, color: Colors.white),
           onPressed: () {
             _scrollAnchorController.scrollToIndex(
               index: currentActiveUnit - 1,
@@ -77,6 +71,11 @@ class _HomeTabState extends State<HomeTab> {
               curve: Curves.linear,
             );
           },
+          tooltip: 'Scroll up',
+          child: const HugeIcon(
+            icon: HugeIcons.strokeRoundedArrowUp01,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Stack(
@@ -144,8 +143,8 @@ class _HomeTabState extends State<HomeTab> {
             },
           ),
           Hidable(
-            controller: _scrollController,
-            preferredWidgetSize: Size.fromHeight(60.h),
+            controller: _scrollAnchorController,
+            preferredWidgetSize: Size.fromHeight(75.h),
             deltaFactor: 0.06,
             child: FloatingAppBar(
               showRewardedAd: () {
@@ -183,10 +182,7 @@ class _HomeTabState extends State<HomeTab> {
           score = scores[index];
         }
 
-        _unitKeys[unit.id] = GlobalKey();
-
         return Container(
-          key: _unitKeys[unit.id],
           alignment: alignment,
           child: Container(
             width: 100.w,

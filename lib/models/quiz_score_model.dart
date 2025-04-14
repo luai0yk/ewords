@@ -1,13 +1,17 @@
 class QuizScoreModel {
   int? nextUnitId;
   int id, unitId, bookId, correctAnswers;
+  String? takenAt = '', updatedAt = '';
 
-  QuizScoreModel(
-      {required this.unitId,
-      required this.bookId,
-      required this.correctAnswers,
-      required this.id,
-      this.nextUnitId});
+  QuizScoreModel({
+    required this.unitId,
+    required this.bookId,
+    required this.correctAnswers,
+    required this.id,
+    this.takenAt,
+    this.updatedAt,
+    this.nextUnitId,
+  });
 
   // Calculate wrong answers
   int get wrongAnswers => 20 - correctAnswers;
@@ -22,6 +26,8 @@ class QuizScoreModel {
       unitId: map['unit_id'],
       bookId: map['book_id'],
       correctAnswers: map['correct_answers'],
+      takenAt: map['taken_at'],
+      updatedAt: map['updated_at'],
     );
   }
 

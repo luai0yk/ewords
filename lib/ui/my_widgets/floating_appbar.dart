@@ -31,7 +31,6 @@ class FloatingAppBar extends StatelessWidget {
       ),
       padding: EdgeInsets.all(4.sp),
       width: double.infinity,
-      height: 35.h,
       child: SizedBox(
         width: double.infinity,
         child: Row(
