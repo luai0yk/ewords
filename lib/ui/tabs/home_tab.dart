@@ -8,7 +8,7 @@ import 'package:ewords/theme/my_theme.dart';
 import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:ewords/ui/my_widgets/stars_rate.dart';
 import 'package:ewords/ui/pages/unit_content_page.dart';
-import 'package:ewords/utils/ads/reward_ad.dart';
+import 'package:ewords/utils/ads/reward_ad_manager.dart';
 import 'package:ewords/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,6 +49,11 @@ class _HomeTabState extends State<HomeTab> {
     _quizProvider = context.read<QuizProvider>();
     _quizProvider!.init();
     _diamondsProvider!.loadDiamonds();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void init() async {
@@ -147,8 +152,8 @@ class _HomeTabState extends State<HomeTab> {
             preferredWidgetSize: Size.fromHeight(75.h),
             deltaFactor: 0.06,
             child: FloatingAppBar(
-              showRewardedAd: () {
-                context.read<RewardAd>().showRewardedAd();
+              showRewardedAd: () async {
+                await context.read<RewardAdManager>().showRewardedAd();
               },
             ),
           ),

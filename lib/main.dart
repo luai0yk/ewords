@@ -1,7 +1,7 @@
 import 'package:ewords/provider/diamonds_provider.dart';
 import 'package:ewords/provider/quiz_provider.dart';
 import 'package:ewords/provider/units_provider.dart';
-import 'package:ewords/utils/ads/reward_ad.dart';
+import 'package:ewords/utils/ads/reward_ad_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -50,21 +50,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late RewardAd _rewardAd;
+  RewardAdManager? _rewardAd;
 
   @override
   void initState() {
     super.initState();
     init();
 
-    _rewardAd = RewardAd(
-      context: context,
+    _rewardAd = RewardAdManager(
       onRewardEarned: () {
         context.read<DiamondsProvider>().adRewardDiamonds(diamonds: 6);
       },
     );
 
-    _rewardAd.loadRewardedAd();
+    _rewardAd!.loadRewardedAd();
   }
 
   void init() async {

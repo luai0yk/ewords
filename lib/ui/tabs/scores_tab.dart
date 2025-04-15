@@ -8,21 +8,29 @@ import 'package:hidable/hidable.dart';
 import '../../theme/my_colors.dart';
 
 class ScoresTab extends StatefulWidget {
-  final ScrollController scrollController;
-  const ScoresTab({super.key, required this.scrollController});
+  const ScoresTab({super.key});
 
   @override
   State<ScoresTab> createState() => _ScoresTabState();
 }
 
 class _ScoresTabState extends State<ScoresTab> {
+  ScrollController? _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Hidable(
         deltaFactor: 0.06,
         preferredWidgetSize: Size.fromHeight(75.sp),
-        controller: widget.scrollController,
+        controller: _scrollController!,
         child: AppBar(
           title: Text('quiz scores'.toUpperCase()), // Title of the app bar
           titleTextStyle: TextStyle(
@@ -71,8 +79,8 @@ class _ScoresTabState extends State<ScoresTab> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             padding: const EdgeInsets.all(10),
+            controller: _scrollController,
             itemBuilder: (context, index) {
-              print('score count = ${snapshot.data!.length}');
               QuizScoreModel quizScore = snapshot.data![index];
               return QuizScoreCard(quizScore: quizScore);
             },

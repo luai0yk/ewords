@@ -53,10 +53,7 @@ class QuizScoreHelper extends DBHelper {
 
     if (response.isEmpty) {
       await insertQuizScore(quizScoreModel);
-      print('empty response');
     } else {
-      print('exited response');
-
       await updateQuizScore(
           response.first['id'], quizScoreModel.correctAnswers);
     }

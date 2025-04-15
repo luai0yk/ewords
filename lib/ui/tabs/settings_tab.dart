@@ -2,7 +2,10 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:ewords/ui/dialogs/change_theme_dialog.dart';
 import 'package:ewords/ui/dialogs/change_tts_language_dialog.dart';
 import 'package:ewords/ui/dialogs/download_tts_assistant_dialog.dart';
+import 'package:ewords/ui/my_widgets/my_snackbar.dart';
+import 'package:ewords/ui/tabs/launch_site.dart';
 import 'package:ewords/utils/helpers/dialog_helper.dart';
+import 'package:ewords/utils/launch_email.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -206,6 +209,69 @@ class _SettingsPageState extends State<SettingsPage> {
               );
               await intent.launch();
             },
+          ),
+
+          Padding(
+            padding: EdgeInsets.only(top: 15.sp, left: 15.sp, right: 15.sp),
+            child: Text('Help & About', style: MyTheme().headSettingStyle),
+          ),
+          ListTile(
+            leading: HugeIcon(
+              icon: HugeIcons.strokeRoundedContact,
+              color: MyColors.themeColors[300]!,
+            ),
+            title: Text(
+              'Contact us',
+              style: MyTheme().mainTextStyle,
+            ),
+            subtitle: Text(
+              'Get in touch — we’re always here to help you!',
+              style: MyTheme().secondaryTextStyle,
+            ),
+            onTap: () {
+              LaunchEmail.launch(
+                email: 'luai0yk@gmail.com',
+                onError: (email) {
+                  MySnackBar.create(content: 'Could not launch $email');
+                },
+              );
+            },
+          ),
+          ListTile(
+            leading: HugeIcon(
+              icon: HugeIcons.strokeRoundedGithub,
+              color: MyColors.themeColors[300]!,
+            ),
+            title: Text(
+              'Contribute',
+              style: MyTheme().mainTextStyle,
+            ),
+            subtitle: Text(
+              'eWords is an open-source project, and we welcome contributions.',
+              style: MyTheme().secondaryTextStyle,
+            ),
+            onTap: () {
+              LaunchSite.launch(
+                url: 'https://github.com/luai0yk/ewords',
+                onError: (url) {
+                  MySnackBar.create(content: 'Could not launch $url');
+                },
+              );
+            },
+          ),
+          ListTile(
+            leading: HugeIcon(
+              icon: HugeIcons.strokeRoundedInformationCircle,
+              color: MyColors.themeColors[300]!,
+            ),
+            title: Text(
+              'App Info',
+              style: MyTheme().mainTextStyle,
+            ),
+            subtitle: Text(
+              'eWords version 1.0',
+              style: MyTheme().secondaryTextStyle,
+            ),
           ),
         ],
       ),

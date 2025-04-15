@@ -15,7 +15,8 @@ import '../../provider/diamonds_provider.dart';
 import '../../provider/quiz_provider.dart';
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
-import '../../utils/ads/reward_ad.dart';
+import '../../utils/ads/interstitial_ad_manager.dart';
+import '../../utils/ads/reward_ad_manager.dart';
 import '../../utils/helpers/dialog_helper.dart';
 import '../dialogs/app_dialog.dart';
 import '../my_widgets/my_card.dart';
@@ -35,12 +36,9 @@ class QuizTab extends StatefulWidget {
 }
 
 class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
-  //late RewardAd _rewardAd;
-
   QuizProvider? _quizProvider;
   UnitsProvider? _unitsProvider;
-  // double? _score;
-  // int? _answerdQuestionCount;
+  InterstitialAdManager? _interstitialAdManager;
 
   DiamondsProvider? _diamondsProvider;
 
@@ -50,8 +48,11 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     _quizProvider = context.read<QuizProvider>();
     _diamondsProvider = context.read<DiamondsProvider>();
     _unitsProvider = context.read<UnitsProvider>();
+    _interstitialAdManager = InterstitialAdManager();
+
     _diamondsProvider!.loadDiamonds();
     _unitsProvider!.scoreById(id: widget.unit.id);
+    _interstitialAdManager!.loadAd();
     _quizProvider!.unit = widget.unit;
     // Don't automatically load words to show start screen first
     _quizProvider!.cover(true); // Show the covered card initially
@@ -59,15 +60,16 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 
-  void init() async {
-    await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
-  }
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _quizProvider!.resetQuiz();
+    _interstitialAdManager!.dispose();
     super.dispose();
+  }
+
+  void init() async {
+    await Provider.of<UnitsProvider>(context, listen: false).fetchScores();
   }
 
   @override
@@ -219,7 +221,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                                             okayText: 'Watch Ad',
                                             onOkay: () {
                                               context
-                                                  .read<RewardAd>()
+                                                  .read<RewardAdManager>()
                                                   .showRewardedAd();
                                             },
                                             onCancel: () => null,
@@ -538,6 +540,7 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
         AppButton(
           text: 'Back to Home',
           onPressed: () {
+            _interstitialAdManager!.showAd();
             Navigator.of(context).pop();
           },
         ),

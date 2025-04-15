@@ -19,8 +19,7 @@ import '../../utils/tts.dart';
 import '../my_widgets/my_list_tile.dart';
 
 class FavoriteTab extends StatefulWidget {
-  final ScrollController scrollController;
-  const FavoriteTab({super.key, required this.scrollController});
+  const FavoriteTab({super.key});
 
   @override
   State<FavoriteTab> createState() => _FavoriteTabState();
@@ -29,6 +28,13 @@ class FavoriteTab extends StatefulWidget {
 class _FavoriteTabState extends State<FavoriteTab> {
   FlutterTts? _flutterTts;
   TTSProvider? _ttsProvider;
+  ScrollController? _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
 
   @override
   void didChangeDependencies() {
@@ -64,7 +70,7 @@ class _FavoriteTabState extends State<FavoriteTab> {
       appBar: Hidable(
         deltaFactor: 0.06,
         preferredWidgetSize: Size.fromHeight(75.sp),
-        controller: widget.scrollController,
+        controller: _scrollController!,
         child: AppBar(
           title: Text('favorites'.toUpperCase()), // Title of the app bar
           titleTextStyle: TextStyle(
@@ -118,7 +124,7 @@ class _FavoriteTabState extends State<FavoriteTab> {
               final favoriteList = snapshot.data;
 
               return ListView.builder(
-                controller: widget.scrollController,
+                controller: _scrollController,
                 padding: const EdgeInsets.all(10),
                 itemCount: favoriteList!.length, // Count of favorite words
                 itemBuilder: (context, index) {

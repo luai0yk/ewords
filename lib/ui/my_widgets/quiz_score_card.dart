@@ -29,19 +29,19 @@ class QuizScoreCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                DateFormat('yy-MM-dd').format(
+                  DateTime.parse(quizScore.updatedAt!),
+                ),
+                style: MyTheme().secondaryTextStyle,
+              ),
+              const Spacer(),
               AppBadge(
                 text: MyConstants.levelCodes[quizScore.bookId - 1],
               ),
               const SizedBox(width: 5),
               AppBadge(
                 text: 'U${quizScore.unitId}',
-              ),
-              const Spacer(),
-              Text(
-                DateFormat('yy-MM-dd').format(
-                  DateTime.parse(quizScore.updatedAt!),
-                ),
-                style: MyTheme().secondaryTextStyle,
               ),
             ],
           ),

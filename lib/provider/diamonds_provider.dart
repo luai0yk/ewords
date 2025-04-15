@@ -18,11 +18,11 @@ class DiamondsProvider with ChangeNotifier {
 
     if (score > previousScore) {
       if (score >= 90) {
-        _diamonds = (prefs.getInt('diamond') ?? 6) + 9;
-      } else if (score >= 75) {
         _diamonds = (prefs.getInt('diamond') ?? 6) + 6;
+      } else if (score >= 75) {
+        _diamonds = (prefs.getInt('diamond') ?? 6) + 4;
       } else if (score >= 50) {
-        _diamonds = (prefs.getInt('diamond') ?? 6) + 3;
+        _diamonds = (prefs.getInt('diamond') ?? 6) + 2;
       }
     }
 

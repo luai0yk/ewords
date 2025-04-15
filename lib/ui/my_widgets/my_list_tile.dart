@@ -1,11 +1,11 @@
 import 'package:ewords/models/word_model.dart';
-import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../theme/my_colors.dart';
 import '../../theme/my_theme.dart';
 import '../../utils/constants.dart';
+import 'app_badge.dart';
 import 'my_card.dart';
 
 class MyListTile extends StatelessWidget {
@@ -54,17 +54,6 @@ class MyListTile extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Level and Unit badges
-                      if (isWordDetailVisible) ...[
-                        AppBadge(
-                          text: MyConstants.levelCodes[word.bookId - 1],
-                        ),
-                        const SizedBox(width: 8),
-                        AppBadge(
-                          text: 'U${word.unitId}',
-                        ),
-                        const SizedBox(width: 10),
-                      ],
                       // Word title
                       Expanded(
                         child: Text(
@@ -80,6 +69,18 @@ class MyListTile extends StatelessWidget {
                           ),
                         ),
                       ),
+
+                      // Level and Unit badges
+                      if (isWordDetailVisible) ...[
+                        AppBadge(
+                          text: MyConstants.levelCodes[word.bookId - 1],
+                        ),
+                        const SizedBox(width: 8),
+                        AppBadge(
+                          text: 'U${word.unitId}',
+                        ),
+                        const SizedBox(width: 10),
+                      ],
                     ],
                   ),
 
@@ -118,7 +119,7 @@ class MyListTile extends StatelessWidget {
             // Trailing widgets
             if (isTrailingVisible && trailing != null && trailing!.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(left: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,

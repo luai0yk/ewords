@@ -1,5 +1,5 @@
 import 'package:ewords/models/unit_model.dart';
-import 'package:ewords/utils/ads/reward_ad.dart';
+import 'package:ewords/utils/ads/reward_ad_manager.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,8 +45,6 @@ class _UnitContentPageState extends State<UnitContentPage>
   TabBarIconsVisibilityProvider? _tabBarIconsVisibilityProvider;
 
   TTSProvider? _ttsProvider;
-
-  RewardAd? rewardAd;
 
   @override
   void initState() {
@@ -143,7 +141,9 @@ class _UnitContentPageState extends State<UnitContentPage>
                                 content: 'Watch an ad and get 6 diamonds.',
                                 okayText: 'Watch Ad',
                                 onOkay: () {
-                                  context.read<RewardAd>().showRewardedAd();
+                                  context
+                                      .read<RewardAdManager>()
+                                      .showRewardedAd();
                                 },
                                 onCancel: () => null,
                               );
