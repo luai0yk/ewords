@@ -1,3 +1,4 @@
+import 'package:ewords/ui/my_widgets/app_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -76,13 +77,30 @@ class FloatingAppBar extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Text(
-              'eWords',
-              style: MyTheme().secondaryTextStyle.copyWith(
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
+            RichText(
+              text: TextSpan(
+                style: MyTheme().secondaryTextStyle.copyWith(
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                      //backgroundColor: Colors.red,
+                    ),
+                children: [
+                  WidgetSpan(
+                    child: AppBadge(
+                      text: 'E',
+                      fontSize: 12,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      backgroundColor: MyColors.themeColors[300]!,
+                      textColor: Colors.white,
+                    ),
                   ),
+                  const TextSpan(text: ' words'),
+                ],
+              ),
             ),
             const Spacer(),
             IconButton(

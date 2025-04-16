@@ -61,8 +61,7 @@ class QuizScoreHelper extends DBHelper {
 
   Future<List<QuizScoreModel>> getQuizScores() async {
     Database? db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db!.query(QUIZ_TABLE_NAME, orderBy: 'id DESC');
+    final List<Map<String, dynamic>> maps = await db!.query(QUIZ_TABLE_NAME);
 
     return List.generate(
       maps.length,

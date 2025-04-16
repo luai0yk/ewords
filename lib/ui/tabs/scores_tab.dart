@@ -74,17 +74,19 @@ class _ScoresTabState extends State<ScoresTab> {
                 ),
               ),
             );
-          }
+          } else {
+            List<QuizScoreModel> scores = snapshot.data!.reversed.toList();
 
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            padding: const EdgeInsets.all(10),
-            controller: _scrollController,
-            itemBuilder: (context, index) {
-              QuizScoreModel quizScore = snapshot.data![index];
-              return QuizScoreCard(quizScore: quizScore);
-            },
-          );
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              padding: const EdgeInsets.all(10),
+              controller: _scrollController,
+              itemBuilder: (context, index) {
+                QuizScoreModel quizScore = scores[index];
+                return QuizScoreCard(quizScore: quizScore);
+              },
+            );
+          }
         },
       ),
     );
