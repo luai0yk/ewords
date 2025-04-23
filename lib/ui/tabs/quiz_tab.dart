@@ -95,6 +95,10 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
                 ValueListenableBuilder(
                   valueListenable: provider.isQuizCompleted,
                   builder: (context, isCompleted, child) {
+                    if (isCompleted) {
+                      _interstitialAdManager!.showAd();
+                    }
+
                     return isCompleted
                         ? _buildCompletionScreen(provider)
                         : const SizedBox();
@@ -540,7 +544,6 @@ class _QuizTabState extends State<QuizTab> with WidgetsBindingObserver {
         AppButton(
           text: 'Back to Home',
           onPressed: () {
-            _interstitialAdManager!.showAd();
             Navigator.of(context).pop();
           },
         ),

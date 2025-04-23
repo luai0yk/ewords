@@ -76,7 +76,6 @@ class _ScoresTabState extends State<ScoresTab> {
             );
           } else {
             List<QuizScoreModel> scores = snapshot.data!.reversed.toList();
-
             return ListView.builder(
               itemCount: snapshot.data!.length,
               padding: const EdgeInsets.all(10),
